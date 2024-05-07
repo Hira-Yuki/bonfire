@@ -3,11 +3,18 @@ import { Link, useNavigate } from "react-router-dom"
 import { FirebaseError } from "firebase/app"
 import { signInWithEmailAndPassword } from "firebase/auth"
 import { auth } from "../firebase"
-import { Form, Input, Title, Wrapper, Error, Switcher } from "../styled-components/AuthComponents"
 import GithubButton from "../components/GithubButton"
 import GoogleButton from "../components/GoogleButton"
 import SocialDivider from "../components/SocialDivider"
-
+import {
+  Form,
+  Input,
+  Title,
+  Wrapper,
+  Error,
+  Switcher
+}
+  from "../styled-components/AuthComponents"
 
 const Login = () => {
   const navigate = useNavigate()

@@ -13,5 +13,5 @@ const Divider = styled.hr`
     margin-top: 40px;
     margin-bottom: 10px;
     border-color: gray;
-    opacity: 0.8;
+    opacity: 0.5;
 `
