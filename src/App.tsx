@@ -1,14 +1,15 @@
+import reset from "styled-reset"
 import { RouterProvider, createBrowserRouter } from "react-router-dom"
+import { styled, createGlobalStyle } from "styled-components"
+import { useEffect, useState } from "react"
+import { auth } from "./firebase"
 import Layout from "./components/Layout"
 import Home from "./routes/Home"
 import Profile from "./routes/Profile"
 import Login from "./routes/Login"
 import CreateAccount from "./routes/CreateAccount"
-import { styled, createGlobalStyle } from "styled-components"
-import reset from "styled-reset"
-import { useEffect, useState } from "react"
 import LoadingScreen from "./components/LoadingScreen"
-import { auth } from "./firebase"
+import ProtectedRoute from "./components/ProtectedRoute"
 
 /**
  * @todo 코드 스플리팅과 컴포넌트 분할 시도할 것 
@@ -20,11 +21,17 @@ const router = createBrowserRouter([
     children: [
       {
         path: "",
-        element: <Home />
+        element: (
+          <Home />
+        )
       },
       {
         path: "profile",
-        element: <Profile />
+        element: (
+          <ProtectedRoute>
+            <Profile />
+          </ProtectedRoute>
+        )
       }
     ]
   },

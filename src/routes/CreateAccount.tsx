@@ -1,7 +1,16 @@
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth"
 import { useState } from "react"
-import { styled } from "styled-components"
+import { auth } from "../firebase"
+import { Link, useNavigate } from "react-router-dom"
+import { FirebaseError } from "firebase/app"
+import { Wrapper, Title, Input, Switcher, Error, Form } from "../components/AuthComponents"
+
+// const errors = {
+//   "auth/email-already-in-use" : "이미 존재하는 이메일 주소입니다."
+// }
 
 const CreateAccount = () => {
+  const navigate = useNavigate()
   const [isLoading, setLoading] = useState(false)
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
@@ -22,14 +31,29 @@ const CreateAccount = () => {
     }
   }
 
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    setError("")
+    if (confirmPassword === "" || confirmPassword !== password) {
+      setError("입력한 암호를 정확히 확인해주세요.")
+      return
+    }
+
+    if (isLoading || name === "" || email === "" || password === "") return
     try {
-      // create an account
-      // set the name of the user.
-      // redirect to the home page
+      setLoading(true)
+      // firebase를 이용해서 유저 계정을 생성
+      const credentials = await createUserWithEmailAndPassword(auth, email, password)
+      console.log(credentials.user)
+      // 유저 계정 생성시 이름이 필요하지 않음, 가입시 입력 받은 것을 이용해서 바로 업데이트 해줌
+      await updateProfile(credentials.user, { displayName: name, })
+      navigate("/")
     } catch (e) {
-      // setError
+      if(e instanceof FirebaseError) {
+        setError(e.message)
+      }
+    
+      
     } finally {
       setLoading(false)
     }
@@ -80,48 +104,12 @@ const CreateAccount = () => {
           value={isLoading ? "Loading..." : "Create Account"}
         />
       </Form>
-      {error !== "" ? <Error>{error}</Error>: null}
+      {error !== "" ? <Error>{error}</Error> : null}
+      <Switcher>
+        이미 계정이 있으세요? <Link to="/login">로그인&rarr;</Link>
+      </Switcher>
     </Wrapper>
   )
 }
 
 export default CreateAccount
-
-const Wrapper = styled.div`
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 420px;
-  padding: 50px 0px;
-`
-const Title = styled.h1`
-  font-size: 42px;
-`
-
-const Form = styled.form`
-  margin-top: 50px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  width: 90%;
-`
-
-const Input = styled.input`
-  padding: 10px 20px;
-  border-radius: 50px;
-  border: none;
-  width: 100%;
-  font-size: 16px;
-  &[type="submit"] {
-    cursor: pointer;
-    &:hover {
-      opacity: 0.8;
-    }
-  }
-`
-
-const Error = styled.span`
-  font-weight: 600;
-  color: tomato
-`
