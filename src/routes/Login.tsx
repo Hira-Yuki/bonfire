@@ -4,6 +4,9 @@ import { FirebaseError } from "firebase/app"
 import { signInWithEmailAndPassword } from "firebase/auth"
 import { auth } from "../firebase"
 import { Wrapper, Title, Input, Switcher, Error, Form } from "../components/AuthComponents"
+import GithubButton from "../components/GithubButton"
+import GoogleButton from "../components/GoogleButton"
+import SocialDivider from "../components/SocialDivider"
 
 
 const Login = () => {
@@ -71,6 +74,9 @@ const Login = () => {
       <Switcher>
         계정이 없으세요? <Link to="/create-account">지금 생성하세요 &rarr;</Link>
       </Switcher>
+      <SocialDivider />
+      <GoogleButton />
+      <GithubButton />
     </Wrapper>
   )
 }
