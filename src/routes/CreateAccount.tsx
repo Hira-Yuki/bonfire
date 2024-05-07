@@ -44,21 +44,16 @@ const CreateAccount = () => {
       setLoading(true)
       // firebase를 이용해서 유저 계정을 생성
       const credentials = await createUserWithEmailAndPassword(auth, email, password)
-      console.log(credentials.user)
       // 유저 계정 생성시 이름이 필요하지 않음, 가입시 입력 받은 것을 이용해서 바로 업데이트 해줌
       await updateProfile(credentials.user, { displayName: name, })
       navigate("/")
     } catch (e) {
-      if(e instanceof FirebaseError) {
+      if (e instanceof FirebaseError) {
         setError(e.message)
       }
-    
-      
     } finally {
       setLoading(false)
     }
-
-    console.log(name, email, password, confirmPassword)
 
   }
 
@@ -106,7 +101,7 @@ const CreateAccount = () => {
       </Form>
       {error !== "" ? <Error>{error}</Error> : null}
       <Switcher>
-        이미 계정이 있으세요? <Link to="/login">로그인&rarr;</Link>
+        이미 계정이 있으세요? <Link to="/login">로그인 하기 &rarr;</Link>
       </Switcher>
     </Wrapper>
   )

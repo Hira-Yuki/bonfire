@@ -35,13 +35,9 @@ const Login = () => {
       if (e instanceof FirebaseError) {
         setError(e.message)
       }
-
-
     } finally {
       setLoading(false)
     }
-
-    console.log(email, password)
 
   }
 
@@ -73,7 +69,7 @@ const Login = () => {
       </Form>
       {error !== "" ? <Error>{error}</Error> : null}
       <Switcher>
-        계정이 없으세요? <Link to="/create-account">계정 생성하기&rarr;</Link>
+        계정이 없으세요? <Link to="/create-account">지금 생성하세요 &rarr;</Link>
       </Switcher>
     </Wrapper>
   )
