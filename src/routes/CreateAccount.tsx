@@ -61,9 +61,7 @@ const CreateAccount = () => {
     } finally {
       setLoading(false)
     }
-
   }
-
 
   return (
     <Wrapper>
