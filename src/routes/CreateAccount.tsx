@@ -3,10 +3,10 @@ import { useState } from "react"
 import { auth } from "../firebase"
 import { Link, useNavigate } from "react-router-dom"
 import { FirebaseError } from "firebase/app"
-import { Wrapper, Title, Input, Switcher, Error, Form } from "../components/styles/AuthComponents"
 import GithubButton from "../components/GithubButton"
 import GoogleButton from "../components/GoogleButton"
 import SocialDivider from "../components/SocialDivider"
+import { Form, Input, Title, Wrapper, Error, Switcher } from "../styled-components/AuthComponents"
 
 // const errors = {
 //   "auth/email-already-in-use" : "이미 존재하는 이메일 주소입니다."

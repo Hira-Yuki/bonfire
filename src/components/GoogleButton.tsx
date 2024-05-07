@@ -1,4 +1,4 @@
-import { SocialButton, SocialLogo } from "./styles/SocialButtonComponents";
+import { SocialButton, SocialLogo } from "../styled-components/SocialButtonComponents";
 import { SocialLogInHandler } from "../helper/SocialLogInHandler";
 import { SOCIAL_PROVIDERS } from "../constants/social";
 
