@@ -4,7 +4,7 @@ import Home from "./routes/Home"
 import Profile from "./routes/Profile"
 import Login from "./routes/Login"
 import CreateAccount from "./routes/CreateAccount"
-import { createGlobalStyle } from "styled-components"
+import { styled, createGlobalStyle } from "styled-components"
 import reset from "styled-reset"
 import { useEffect, useState } from "react"
 import LoadingScreen from "./components/LoadingScreen"
@@ -51,14 +51,14 @@ function App() {
 
 
   return (
-    <>
+    <Wrapper>
       <GlobalStyles />
       {
         isLoading
           ? <LoadingScreen />
           : <RouterProvider router={router} />
       }
-    </>
+    </Wrapper>
   )
 }
 
@@ -79,4 +79,10 @@ const GlobalStyles = createGlobalStyle`
     Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue',
     sans-serif;
   }
+`
+
+const Wrapper = styled.div`
+  height: 100%;
+  display: flex;
+  justify-content: center;
 `
