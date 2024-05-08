@@ -1,13 +1,16 @@
+import reset from "styled-reset"
 import { RouterProvider, createBrowserRouter } from "react-router-dom"
+import { styled, createGlobalStyle } from "styled-components"
+import { useEffect, useState } from "react"
+import { auth } from "./firebase"
 import Layout from "./components/Layout"
 import Home from "./routes/Home"
 import Profile from "./routes/Profile"
 import Login from "./routes/Login"
 import CreateAccount from "./routes/CreateAccount"
-import { createGlobalStyle } from "styled-components"
-import reset from "styled-reset"
-import { useEffect, useState } from "react"
 import LoadingScreen from "./components/LoadingScreen"
+import ProtectedRoute from "./components/ProtectedRoute"
+import ResetPassword from "./routes/ResetPassword"
 
 /**
  * @todo 코드 스플리팅과 컴포넌트 분할 시도할 것 
@@ -19,11 +22,19 @@ const router = createBrowserRouter([
     children: [
       {
         path: "",
-        element: <Home />
+        element: (
+          <ProtectedRoute>
+            <Home />
+          </ProtectedRoute>
+        )
       },
       {
         path: "profile",
-        element: <Profile />
+        element: (
+          <ProtectedRoute>
+            <Profile />
+          </ProtectedRoute>
+        )
       }
     ]
   },
@@ -34,13 +45,17 @@ const router = createBrowserRouter([
   {
     path: "/create-account",
     element: <CreateAccount />
+  },
+  {
+    path: "/reset-password",
+    element: <ResetPassword />
   }
 ])
 
 function App() {
   const [isLoading, setLoading] = useState(true)
   const init = async () => {
-    // wait for firebase
+    await auth.authStateReady()
     setLoading(false)
   }
 
@@ -50,14 +65,14 @@ function App() {
 
 
   return (
-    <>
+    <Wrapper>
       <GlobalStyles />
       {
         isLoading
           ? <LoadingScreen />
           : <RouterProvider router={router} />
       }
-    </>
+    </Wrapper>
   )
 }
 
@@ -78,4 +93,10 @@ const GlobalStyles = createGlobalStyle`
     Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue',
     sans-serif;
   }
+`
+
+const Wrapper = styled.div`
+  height: 100%;
+  display: flex;
+  justify-content: center;
 `
