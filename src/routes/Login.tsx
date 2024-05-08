@@ -79,6 +79,9 @@ const Login = () => {
       <Switcher>
         계정이 없으세요? <Link to="/create-account">지금 생성하세요 &rarr;</Link>
       </Switcher>
+      <Switcher>
+        비밀번호를 잊으셨나요? <Link to="/reset-password">비밀번호 재설정하기 &rarr;</Link>
+      </Switcher>
       <SocialDivider />
       <GoogleButton />
       <GithubButton />

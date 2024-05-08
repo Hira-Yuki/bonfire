@@ -10,6 +10,7 @@ import Login from "./routes/Login"
 import CreateAccount from "./routes/CreateAccount"
 import LoadingScreen from "./components/LoadingScreen"
 import ProtectedRoute from "./components/ProtectedRoute"
+import ResetPassword from "./routes/ResetPassword"
 
 /**
  * @todo 코드 스플리팅과 컴포넌트 분할 시도할 것 
@@ -44,6 +45,10 @@ const router = createBrowserRouter([
   {
     path: "/create-account",
     element: <CreateAccount />
+  },
+  {
+    path: "/reset-password",
+    element: <ResetPassword />
   }
 ])
 
