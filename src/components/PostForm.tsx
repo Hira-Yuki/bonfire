@@ -10,8 +10,8 @@ const PostForm = () => {
   const [isLoading, setLoading] = useState(false)
   const [post, setPost] = useState("")
   const [file, setFile] = useState<File | null>(null)
-  const [preview, setPreview] = useState<string | null>(null);
-  const remainingChars = MAX_POST_LENGTH - post.length;
+  const [preview, setPreview] = useState<string | null>(null)
+  const remainingChars = MAX_POST_LENGTH - post.length // post가 변경되면 리랜더링 되므로 state로 관리하지 않음
 
 
   const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -39,6 +39,11 @@ const PostForm = () => {
     setFile(null)
     setPreview(null)
   }
+  
+  const clearForm = () => {
+    setPost("")
+    removeFile()
+  }
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -60,8 +65,7 @@ const PostForm = () => {
           photo: url
         })
       }
-      setPost("")
-      removeFile()
+      clearForm()
     } catch (e) {
       console.error(e)
     } finally {
@@ -73,8 +77,7 @@ const PostForm = () => {
     const confirmCancel = confirm("작성 중이던 포스트를 모두 지울까요?")
 
     if (confirmCancel) {
-      setPost("")
-      removeFile()
+      clearForm()
     }
   }
 
@@ -282,10 +285,10 @@ const CircularProgress = styled.div<{ $percent: number }>`
       #e6e6e6 0deg,
       #e6e6e6 ${props => props.$percent * 3.6}deg,
       ${props => props.$percent <= 0
-        ? "red"
-        : props.$percent >= (MAX_POST_LENGTH - 200) / MAX_POST_LENGTH * 100
-          ? "#1d9bf0"
-          : "orange"} ${props => props.$percent * 3.6}deg
+    ? "red"
+    : props.$percent >= (MAX_POST_LENGTH - 200) / MAX_POST_LENGTH * 100
+      ? "#1d9bf0"
+      : "orange"} ${props => props.$percent * 3.6}deg
     );
   }
 
