@@ -1,10 +1,17 @@
+import {styled} from "styled-components"
+import PostForm from "../components/PostForm"
 
 const Home = () => {
  
   return (
-    <h1>
-    </h1>
+    <Wrapper>
+      <PostForm/>
+    </Wrapper>
   )
 }
 
 export default Home
+
+const Wrapper = styled.div`
+  
+`

@@ -70,6 +70,8 @@ const Wrapper = styled.div`
   height: 100%;
   width: 100%;
   max-width: 860px;
+  /* 작업 중 */
+  height: 100vh;
 `
 
 const Menu = styled.div`
@@ -77,6 +79,8 @@ const Menu = styled.div`
   flex-direction: column;
   align-items: center;
   gap: 20px;
+  /* 작업 중 */
+  border-right: 1px solid gray;
 `
 
 const MenuItem = styled.div`
