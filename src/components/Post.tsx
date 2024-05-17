@@ -32,6 +32,7 @@ const Post = ({ username, photo, post, userId, id }: IPost) => {
       </Column>
       <Column>
         {photo ? (
+        // Todo: 이미지 보기의 경우 이후 모달 등으로 출력해서 탭 이동이 없도록 개선해볼 수 있음 
           <a href={photo} target="_blank"><Photo src={photo} /></a>
         ) : null}
       </Column>
