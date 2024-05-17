@@ -1,6 +1,6 @@
 # Bonfire
 초소형 SNS 서비스입니다.
-[demo link - not Yet...](#)
+[demo link - WIP](https://community-type.web.app/)
 
 ## Installation
 1. clone this repository
