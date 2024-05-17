@@ -1,19 +1,22 @@
-import { auth } from "../firebase"
+import { styled } from "styled-components"
+import PostForm from "../components/PostForm"
+import Timeline from "../components/Timeline"
 
-/**
- * 
- * protected-route 테스트...
- */
 const Home = () => {
-  const logOut = () =>{
-    auth.signOut()
-    
-  }
+
   return (
-    <h1>
-      <button onClick={logOut}>log Out</button>
-    </h1>
+    <Wrapper>
+      <PostForm />
+      <Timeline />
+    </Wrapper>
   )
 }
 
 export default Home
+
+const Wrapper = styled.div`
+  display: grid;
+  gap: 50px;
+  overflow-y: scroll;
+  grid-template-rows: 1fr 5fr;
+`

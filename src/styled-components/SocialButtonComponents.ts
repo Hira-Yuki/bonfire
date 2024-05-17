@@ -1,4 +1,4 @@
-import { styled } from "styled-components"
+import { styled } from "styled-components";
 
 export const SocialButton = styled.span`
   background-color: white;
@@ -14,8 +14,9 @@ export const SocialButton = styled.span`
   align-items: center;
   justify-content: center;
   cursor: pointer;
-`
+`;
 
 export const SocialLogo = styled.img`
   height: 25px;
-`
+  
+`;
