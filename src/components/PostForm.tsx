@@ -231,13 +231,13 @@ const ImagePreviewContainer = styled.div`
   position: relative;
   width: fit-content;
   height: 120px;
-`;
+`
 
 const ImagePreview = styled.img`
   max-height: 100%;
   max-width: 100%;
   border-radius: 10px;
-`;
+`
 
 const RemoveImageButton = styled.button`
   position: absolute;
