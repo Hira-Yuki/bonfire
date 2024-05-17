@@ -4,7 +4,9 @@ import { auth, db, storage } from "../firebase"
 import { deleteDoc, doc, updateDoc } from "firebase/firestore";
 import { deleteObject, getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { useState } from "react";
-
+/**
+ * @todo 이미지 수정 기능 문제 해결 보류 중 꼭 해결할 것 
+ */
 const Post = ({ username, photo, post, userId, id }: IPost) => {
   const user = auth.currentUser
   const [isEditing, setIsEditing] = useState(false)
