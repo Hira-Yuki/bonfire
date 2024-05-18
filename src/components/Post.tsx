@@ -4,16 +4,14 @@ import { auth, db, storage } from "../firebase"
 import { deleteDoc, doc, updateDoc } from "firebase/firestore";
 import { deleteObject, getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { useState } from "react";
-/**
- * @todo 이미지 수정 기능 문제 해결 보류 중 꼭 해결할 것 
- */
+
 const Post = ({ username, photo, post, userId, id }: IPost) => {
   const user = auth.currentUser
   const [isEditing, setIsEditing] = useState(false)
   const [editedPost, setEditedPost] = useState(post)
   const [newPhoto, setNewPhoto] = useState<File | null>(null)
   const [newPhotoURL, setNewPhotoURL] = useState(photo)
-  // const [removePhoto, setRemovePhoto] = useState(false)
+  const [$removePhoto, set$RemovePhoto] = useState(false)
 
   const onDelete = async () => {
     const ok = confirm("포스트를 정말로 삭제할까요?")
@@ -42,7 +40,7 @@ const Post = ({ username, photo, post, userId, id }: IPost) => {
       reader.onloadend = () => {
         setNewPhotoURL(reader.result as string)
       }
-      reader.readAsDataURL(files[0])
+      reader.readAsDataURL(selectedFile)
     }
   }
 
@@ -54,13 +52,13 @@ const Post = ({ username, photo, post, userId, id }: IPost) => {
         post: editedPost,
       })
 
-      // if (removePhoto) {
-      //   const photoRef = ref(storage, `posts/${user.uid}/${id}`)
-      //   await deleteObject(photoRef)
-      //   await updateDoc(postRef, {
-      //     photo: null
-      //   })
-      // }
+      if ($removePhoto) {
+        const photoRef = ref(storage, `posts/${user.uid}/${id}`)
+        await deleteObject(photoRef)
+        await updateDoc(postRef, {
+          photo: null
+        })
+      }
 
       if (newPhoto) {
         const photoRef = ref(storage, `posts/${user.uid}/${id}`)
@@ -76,13 +74,16 @@ const Post = ({ username, photo, post, userId, id }: IPost) => {
       setIsEditing(false)
     } catch (error) {
       console.log(error)
+    } finally {
+      set$RemovePhoto(false)
     }
   }
 
-  // const removeFile = (e: React.MouseEvent<HTMLButtonElement>) => {
-  //   e.stopPropagation()
-  //   setRemovePhoto(true)
-  // }
+  const removeFile = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation()
+    set$RemovePhoto(true)
+    setNewPhoto(null)
+  }
 
   return (
     <Wrapper>
@@ -116,17 +117,26 @@ const Post = ({ username, photo, post, userId, id }: IPost) => {
                   <Photo
                     src={newPhotoURL}
                     alt="New Post"
+                    $removePhoto={$removePhoto}
                   />
-                  {/* <RemoveImageButton onClick={removeFile}>
-                    // 이미지 삭제
+                  <RemoveImageButton onClick={removeFile}>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
                       <path fillRule="evenodd" d="M6.75 3A2.25 2.25 0 0 0 4.5 5.25v.75H3a.75.75 0 0 0 0 1.5h1.5v10.5A2.25 2.25 0 0 0 6.75 20.25h10.5A2.25 2.25 0 0 0 19.5 18V7.5H21a.75.75 0 0 0 0-1.5h-1.5V5.25A2.25 2.25 0 0 0 17.25 3H6.75Zm7.5 13.5a.75.75 0 0 1-1.5 0V9a.75.75 0 0 1 1.5 0v7.5Zm-4.5 0a.75.75 0 0 1-1.5 0V9a.75.75 0 0 1 1.5 0v7.5Z" clipRule="evenodd" />
                     </svg>
-                  </RemoveImageButton> */}
+                  </RemoveImageButton>
                 </ImagePreviewContainer>
-              ) : (<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
-                <path fillRule="evenodd" d="M1.5 6a2.25 2.25 0 0 1 2.25-2.25h16.5A2.25 2.25 0 0 1 22.5 6v12a2.25 2.25 0 0 1-2.25 2.25H3.75A2.25 2.25 0 0 1 1.5 18V6ZM3 16.06V18c0 .414.336.75.75.75h16.5A.75.75 0 0 0 21 18v-1.94l-2.69-2.689a1.5 1.5 0 0 0-2.12 0l-.88.879.97.97a.75.75 0 1 1-1.06 1.06l-5.16-5.159a1.5 1.5 0 0 0-2.12 0L3 16.061Zm10.125-7.81a1.125 1.125 0 1 1 2.25 0 1.125 1.125 0 0 1-2.25 0Z" clipRule="evenodd" />
-              </svg>)}
+              ) : newPhoto ? (
+                <Photo
+                  src={newPhotoURL}
+                  alt="New Post"
+                />
+              )
+                : (
+                  <div>
+                    이미지 추가하기
+                  </div>
+                )
+              }
             </AttachFileLabel>
             <AttachFileInput type="file" id="new-file" accept="image/*" onChange={onFileChange} />
           </div>
@@ -135,7 +145,10 @@ const Post = ({ username, photo, post, userId, id }: IPost) => {
             <Column>
               {/* Todo: 이미지 보기의 경우 이후 모달 등으로 출력해서 탭 이동이 없도록 개선해볼 수 있음  */}
               <a href={photo} target="_blank">
-                <Photo src={photo} alt="Post" />
+                <Photo
+                  src={photo}
+                  alt="Post"
+                />
               </a>
             </Column>
           )
@@ -157,12 +170,18 @@ const Wrapper = styled.section`
 
 const Column = styled.div``
 
-const Photo = styled.img`
+interface PhotoProps {
+  $removePhoto?: boolean;
+}
+
+
+const Photo = styled.img<PhotoProps>`
   display: block;
   width: 100%;
   height: 100%;
   border-radius: 15px;
   margin-left: auto;
+  filter: ${({ $removePhoto }) => $removePhoto ? 'grayscale(100%)' : 'none'};
 `
 
 const Username = styled.span`
@@ -233,25 +252,25 @@ const CancelButton = styled(DeleteButton)`
   margin-left: 10px;
 `
 
-// const RemoveImageButton = styled.button`
-//   position: absolute;
-//   top: 0;
-//   right: 0;
-//   background-color: rgba(0, 0, 0, 0.6);
-//   border: none;
-//   border-radius: 50%;
-//   padding: 5px;
-//   cursor: pointer;
-//   display: flex;
-//   align-items: center;
-//   justify-content: center;
+const RemoveImageButton = styled.button`
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  border: none;
+  border-radius: 50%;
+  padding: 5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-//   svg {
-//     fill: tomato;
-//     width: 16px;
-//     height: 16px;
-//   }
-// `
+  svg {
+    fill: tomato;
+    width: 16px;
+    height: 16px;
+  }
+`;
 
 const ImagePreviewContainer = styled.div`
   position: relative;
