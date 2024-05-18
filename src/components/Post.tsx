@@ -12,19 +12,28 @@ const Post = ({ username, photo, post, userId, id }: IPost) => {
   const [newPhoto, setNewPhoto] = useState<File | null>(null)
   const [newPhotoURL, setNewPhotoURL] = useState(photo)
   const [$removePhoto, set$RemovePhoto] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
   const onDelete = async () => {
     const ok = confirm("포스트를 정말로 삭제할까요?")
     if (!ok || user?.uid !== userId) return
+
     try {
+      setIsLoading(true)
       await deleteDoc(doc(db, "posts", id))
       if (photo) {
         const photoRef = ref(storage, `posts/${user.uid}/${id}`)
         await deleteObject(photoRef)
       }
     } catch (e) {
-      console.log(e)
+      console.error(e)
+    } finally {
+      setIsLoading(false)
     }
+  }
+
+  const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setEditedPost(e.target.value)
   }
 
   const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -47,6 +56,7 @@ const Post = ({ username, photo, post, userId, id }: IPost) => {
   const onEdit = async () => {
     if (user?.uid !== userId) return;
     try {
+      setIsLoading(true)
       const postRef = doc(db, "posts", id);
       await updateDoc(postRef, {
         post: editedPost,
@@ -72,10 +82,11 @@ const Post = ({ username, photo, post, userId, id }: IPost) => {
         })
       }
       setIsEditing(false)
-    } catch (error) {
-      console.log(error)
+    } catch (e) {
+      console.error(e)
     } finally {
       set$RemovePhoto(false)
+      setIsLoading(false)
     }
   }
 
@@ -85,31 +96,37 @@ const Post = ({ username, photo, post, userId, id }: IPost) => {
     setNewPhoto(null)
   }
 
-  return (
-    <Wrapper>
-      <Column>
-        <Username>{username}</Username>
-        {isEditing ? (
+  if (isLoading) {
+    return (
+      <Wrapper>
+        <Column>
+          <Username>{username}</Username>
+          <Payload>
+            업데이트 중...
+          </Payload>
+        </Column>
+        <Column>
+          <ImagePreviewContainer />
+        </Column>
+      </Wrapper>
+    )
+  }
+
+  if (isEditing) {
+    return (
+      <Wrapper>
+        <Column>
+          <Username>{username}</Username>
           <div>
             <TextArea
               value={editedPost}
-              onChange={(event) => setEditedPost(event.target.value)}
+              onChange={onChange}
             />
             <SaveButton onClick={onEdit}>Save</SaveButton>
             <CancelButton onClick={() => setIsEditing(false)}>Cancel</CancelButton>
           </div>
-        ) : <Payload>{post}</Payload>}
-        {
-          user?.uid === userId && !isEditing ?
-            <>
-              <DeleteButton onClick={onDelete}>Delete</DeleteButton>
-              <ModifyButton onClick={() => setIsEditing(true)}>Edit</ModifyButton>
-            </>
-            : null
-        }
-      </Column>
-      <Column>
-        {isEditing ? (
+        </Column>
+        <Column>
           <div>
             <AttachFileLabel htmlFor="new-file">
               {photo ? (
@@ -140,7 +157,28 @@ const Post = ({ username, photo, post, userId, id }: IPost) => {
             </AttachFileLabel>
             <AttachFileInput type="file" id="new-file" accept="image/*" onChange={onFileChange} />
           </div>
-        ) : (
+        </Column>
+      </Wrapper>
+    )
+  }
+
+  return (
+    <Wrapper>
+      <Column>
+        {/* 여기 쯤 프로필 사진 들어가면 좋을 것  */}
+        <Username>{username}</Username>
+        <Payload>{post}</Payload>
+        {
+          user?.uid === userId && !isEditing ?
+            <ModifyWrapper>
+              <DeleteButton onClick={onDelete}>Delete</DeleteButton>
+              <ModifyButton onClick={() => setIsEditing(true)}>Edit</ModifyButton>
+            </ModifyWrapper>
+            : null
+        }
+      </Column>
+      <Column>
+        {
           photo && (
             <Column>
               {/* Todo: 이미지 보기의 경우 이후 모달 등으로 출력해서 탭 이동이 없도록 개선해볼 수 있음  */}
@@ -152,7 +190,7 @@ const Post = ({ username, photo, post, userId, id }: IPost) => {
               </a>
             </Column>
           )
-        )}
+        }
       </Column>
     </Wrapper>
   )
@@ -168,12 +206,14 @@ const Wrapper = styled.section`
   border-radius: 15px;
 `
 
-const Column = styled.div``
+const Column = styled.div`
+  display: flex;
+  flex-direction: column;
+`
 
 interface PhotoProps {
   $removePhoto?: boolean;
 }
-
 
 const Photo = styled.img<PhotoProps>`
   display: block;
@@ -190,8 +230,10 @@ const Username = styled.span`
 `
 
 const Payload = styled.p`
-  margin: 10px 0px;
+  margin: 10px 10px;
+  padding-right: 20px;
   font-size: 18px;
+  line-height: 1.4;
 `
 
 const DeleteButton = styled.button`
@@ -276,4 +318,10 @@ const ImagePreviewContainer = styled.div`
   position: relative;
   width: fit-content;
   height: 120px;
+`
+
+const ModifyWrapper = styled.div`
+  margin-top: auto;
+  display: flex;
+  align-items: center;
 `
