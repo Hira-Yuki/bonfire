@@ -8,6 +8,7 @@ export const usePostState = (initialPost: string, initialPhoto?: string) => {
   const [$removePhoto, set$RemovePhoto] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
 
   return {
@@ -25,5 +26,7 @@ export const usePostState = (initialPost: string, initialPhoto?: string) => {
     setIsLoading,
     error,
     setError,
+    isModalOpen,
+    setIsModalOpen,
   };
 };

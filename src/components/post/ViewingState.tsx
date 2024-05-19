@@ -9,6 +9,7 @@ interface ViewingStateProps {
   onEdit: () => void;
   userOwnsPost: boolean;
   error: string | null;
+  onImageClick: () => void;
 }
 
 const ViewingState: React.FC<ViewingStateProps> = ({
@@ -19,6 +20,7 @@ const ViewingState: React.FC<ViewingStateProps> = ({
   onEdit,
   userOwnsPost,
   error,
+  onImageClick,
 }) => {
   return (
     <Wrapper>
@@ -36,9 +38,7 @@ const ViewingState: React.FC<ViewingStateProps> = ({
       <Column>
         {photo && (
           <Column>
-            <a href={photo} target="_blank">
-              <Photo src={photo} alt="Post" />
-            </a>
+            <Photo src={photo} onClick={onImageClick} alt="Post" />
           </Column>
         )}
       </Column>

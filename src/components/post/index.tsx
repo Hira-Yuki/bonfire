@@ -6,6 +6,7 @@ import { usePostState } from "../../hooks/usePostState";
 import LoadingState from "./LoadingState";
 import EditingState from "./EditingState";
 import ViewingState from "./ViewingState";
+import ImageModal from "./ImageModal";
 
 export default function Post({ username, photo, post, userId, id }: IPost) {
   const user = auth.currentUser
@@ -24,6 +25,8 @@ export default function Post({ username, photo, post, userId, id }: IPost) {
     setIsLoading,
     error,
     setError,
+    isModalOpen,
+    setIsModalOpen,
   } = usePostState(post, photo);
 
   const onDelete = async () => {
@@ -109,8 +112,11 @@ export default function Post({ username, photo, post, userId, id }: IPost) {
     set$RemovePhoto(!$removePhoto)
   }
 
+  const handleModal = () => setIsModalOpen(!isModalOpen);
+
+
   if (isLoading) {
-    return <LoadingState username={username} error={error}/>;
+    return <LoadingState username={username} error={error} />;
   }
 
   if (isEditing) {
@@ -133,14 +139,19 @@ export default function Post({ username, photo, post, userId, id }: IPost) {
   }
 
   return (
-    <ViewingState
-      username={username}
-      post={post}
-      photo={photo}
-      onDelete={onDelete}
-      onEdit={() => setIsEditing(true)}
-      userOwnsPost={user?.uid === userId}
-      error={error}
-    />
+    <>
+      <ViewingState
+        username={username}
+        post={post}
+        photo={photo}
+        onDelete={onDelete}
+        onEdit={() => setIsEditing(true)}
+        userOwnsPost={user?.uid === userId}
+        error={error}
+        onImageClick={handleModal}
+      />
+      <ImageModal isOpen={isModalOpen} onClose={handleModal} imageUrl={photo || ''} />
+
+    </>
   );
 }
