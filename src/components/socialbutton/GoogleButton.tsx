@@ -1,6 +1,6 @@
-import { SocialButton, SocialLogo } from "../styled-components/SocialButtonComponents";
-import { SocialLogInHandler } from "../helper/SocialLogInHandler";
-import { SOCIAL_PROVIDERS } from "../constants/social";
+import { SOCIAL_PROVIDERS } from "../../constants/social"
+import { SocialLogInHandler } from "../../helper/SocialLogInHandler"
+import { SocialButton, SocialLogo } from "../../styled-components/SocialButtonComponents"
 
 const GoogleButton = () => {
   return (
