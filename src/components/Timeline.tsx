@@ -1,8 +1,8 @@
 import { Unsubscribe, collection, limit, onSnapshot, orderBy, query } from "firebase/firestore";
 import { useEffect, useState } from "react";
-import { styled } from "styled-components";
+import { styled } from '@linaria/react';
 import { db } from "../firebase";
-import { Post } from "./post";
+import Post from "./post/Post";
 
 export interface IPost {
   id: string;

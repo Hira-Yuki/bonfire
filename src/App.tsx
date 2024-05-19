@@ -1,105 +1,132 @@
-import reset from "styled-reset"
-import { RouterProvider, createBrowserRouter } from "react-router-dom"
-import { styled, createGlobalStyle } from "styled-components"
-import { useEffect, useState } from "react"
-import { auth } from "./firebase"
-import Layout from "./components/Layout"
-import Home from "./routes/Home"
-import Profile from "./routes/Profile"
-import Login from "./routes/Login"
-import CreateAccount from "./routes/CreateAccount"
-import LoadingScreen from "./components/LoadingScreen"
-import ProtectedRoute from "./components/ProtectedRoute"
-import ResetPassword from "./routes/ResetPassword"
+import React, { Suspense, useEffect, useState } from 'react';
+import { RouterProvider, createBrowserRouter } from 'react-router-dom';
+import { styled } from '@linaria/react';
+import { css } from '@linaria/core';
+import reset from 'styled-reset';
+import { auth } from './firebase';
+import LoadingScreen from './components/LoadingScreen';
+import ProtectedRoute from './components/ProtectedRoute';
 
-/**
- * @todo 코드 스플리팅과 컴포넌트 분할 시도할 것 
- */
+// 동적 임포트를 사용하여 코드 스플리팅
+const Layout = React.lazy(() => import('./components/Layout'));
+const Home = React.lazy(() => import('./routes/Home'));
+const Profile = React.lazy(() => import('./routes/Profile'));
+const Login = React.lazy(() => import('./routes/Login'));
+const CreateAccount = React.lazy(() => import('./routes/CreateAccount'));
+const ResetPassword = React.lazy(() => import('./routes/ResetPassword'));
+
 const router = createBrowserRouter([
   {
-    path: "/",
-    element: <Layout />,
+    path: '/',
+    element: (
+      <Suspense fallback={<LoadingScreen />}>
+        <Layout />
+      </Suspense>
+    ),
     children: [
       {
-        path: "",
+        path: '',
         element: (
           <ProtectedRoute>
-            <Home />
+            <Suspense fallback={<LoadingScreen />}>
+              <Home />
+            </Suspense>
           </ProtectedRoute>
-        )
+        ),
       },
       {
-        path: "profile",
+        path: 'profile',
         element: (
           <ProtectedRoute>
-            <Profile />
+            <Suspense fallback={<LoadingScreen />}>
+              <Profile />
+            </Suspense>
           </ProtectedRoute>
-        )
-      }
-    ]
+        ),
+      },
+    ],
   },
   {
-    path: "/login",
-    element: <Login />
+    path: '/login',
+    element: (
+      <Suspense fallback={<LoadingScreen />}>
+        <Login />
+      </Suspense>
+    ),
   },
   {
-    path: "/create-account",
-    element: <CreateAccount />
+    path: '/create-account',
+    element: (
+      <Suspense fallback={<LoadingScreen />}>
+        <CreateAccount />
+      </Suspense>
+    ),
   },
   {
-    path: "/reset-password",
-    element: <ResetPassword />
-  }
-])
+    path: '/reset-password',
+    element: (
+      <Suspense fallback={<LoadingScreen />}>
+        <ResetPassword />
+      </Suspense>
+    ),
+  },
+]);
 
 function App() {
-  const [isLoading, setLoading] = useState(true)
+  const [isLoading, setLoading] = useState(true);
+  
   const init = async () => {
-    await auth.authStateReady()
-    setLoading(false)
-  }
+    await auth.authStateReady();
+    setLoading(false);
+  };
 
   useEffect(() => {
-    init()
-  }, [])
-
+    init();
+  }, []);
 
   return (
     <Wrapper>
       <GlobalStyles />
-      {
-        isLoading
-          ? <LoadingScreen />
-          : <RouterProvider router={router} />
-      }
+      {isLoading ? <LoadingScreen /> : <RouterProvider router={router} />}
     </Wrapper>
-  )
+  );
 }
 
-export default App
+export default App;
 
-/**
- * global CSS reset
- */
-const GlobalStyles = createGlobalStyle`
-  ${reset}
-  * {
-    box-sizing: border-box;
-  }
-  body {
-    background-color: #2b2b2b;
-    color: #d3d3d3;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
-    Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue',
-    sans-serif;
-  }
-  ::-webkit-scrollbar {
-  display:none;
-}
-`
+const GlobalStyles = () => {
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.textContent = `
+      ${resetStyles}
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        background-color: #2b2b2b;
+        color: #d3d3d3;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+        Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue',
+        sans-serif;
+      }
+      ::-webkit-scrollbar {
+        display: none;
+      }
+    `;
+    document.head.append(style);
+    return () => {
+      document.head.removeChild(style);
+    };
+  }, []);
+  return null;
+};
+
+const resetStyles = css`
+  ${reset.toString()}
+`;
 
 const Wrapper = styled.div`
   height: 100%;
   display: flex;
   justify-content: center;
-`
+`;

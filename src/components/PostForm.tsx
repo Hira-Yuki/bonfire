@@ -1,6 +1,7 @@
 import { addDoc, collection, updateDoc } from "firebase/firestore";
 import { useState } from "react";
-import { styled } from "styled-components"
+import { styled } from '@linaria/react';
+
 import { auth, db, storage } from "../firebase";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 

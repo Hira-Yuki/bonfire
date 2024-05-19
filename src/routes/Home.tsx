@@ -1,14 +1,19 @@
-import { styled } from "styled-components"
-import PostForm from "../components/PostForm"
-import Timeline from "../components/Timeline"
+import { styled } from '@linaria/react';
+import React, { Suspense } from "react";
+import LoadingScreen from "../components/LoadingScreen";
+
+const PostForm = React.lazy(() => import("../components/PostForm"));
+const Timeline = React.lazy(() => import("../components/Timeline"));
 
 const Home = () => {
 
   return (
-    <Wrapper>
-      <PostForm />
-      <Timeline />
-    </Wrapper>
+    <Suspense fallback={<LoadingScreen/>}>
+      <Wrapper>
+        <PostForm />
+        <Timeline />
+      </Wrapper>
+    </Suspense>
   )
 }
 

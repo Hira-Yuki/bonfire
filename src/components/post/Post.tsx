@@ -3,7 +3,13 @@ import { auth, db, storage } from "../../firebase"
 import { deleteDoc, doc, updateDoc } from "firebase/firestore";
 import { deleteObject, getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { usePostState } from "../../hooks/usePostState";
-import { EditingState, ImageModal, LoadingState, ViewingState } from ".";
+import React, { Suspense } from "react";
+
+// 동적 import 사용
+const EditingState = React.lazy(() => import("./EditingState"));
+const ViewingState = React.lazy(() => import("./ViewingState"));
+const LoadingState = React.lazy(() => import("./LoadingState"));
+const ImageModal = React.lazy(() => import("./ImageModal"));
 
 export default function Post({ username, photo, post, userId, id }: IPost) {
   const user = auth.currentUser
@@ -111,44 +117,40 @@ export default function Post({ username, photo, post, userId, id }: IPost) {
 
   const handleModal = () => setIsModalOpen(!isModalOpen);
 
-
-  if (isLoading) {
-    return <LoadingState username={username} error={error} />;
-  }
-
-  if (isEditing) {
-    return (
-      <EditingState
-        username={username}
-        editedPost={editedPost}
-        onChange={onChange}
-        onEdit={onEdit}
-        onCancel={() => setIsEditing(false)}
-        newPhotoURL={newPhotoURL}
-        photo={photo}
-        newPhoto={newPhoto}
-        onFileChange={onFileChange}
-        removeFile={removeFile}
-        $removePhoto={$removePhoto}
-        error={error}
-      />
-    );
-  }
-
   return (
-    <>
-      <ViewingState
-        username={username}
-        post={post}
-        photo={photo}
-        onDelete={onDelete}
-        onEdit={() => setIsEditing(true)}
-        userOwnsPost={user?.uid === userId}
-        error={error}
-        onImageClick={handleModal}
-      />
-      <ImageModal isOpen={isModalOpen} onClose={handleModal} imageUrl={photo || ''} />
-
-    </>
+    <Suspense fallback={<div>Loading...</div>}>
+      {isLoading ? (
+        <LoadingState username={username} error={error} />
+      ) : isEditing ? (
+        <EditingState
+          username={username}
+          editedPost={editedPost}
+          onChange={onChange}
+          onEdit={onEdit}
+          onCancel={() => setIsEditing(false)}
+          newPhotoURL={newPhotoURL}
+          photo={photo}
+          newPhoto={newPhoto}
+          onFileChange={onFileChange}
+          removeFile={removeFile}
+          $removePhoto={$removePhoto}
+          error={error}
+        />
+      ) : (
+        <>
+          <ViewingState
+            username={username}
+            post={post}
+            photo={photo}
+            onDelete={onDelete}
+            onEdit={() => setIsEditing(true)}
+            userOwnsPost={user?.uid === userId}
+            error={error}
+            onImageClick={handleModal}
+          />
+          <ImageModal isOpen={isModalOpen} onClose={handleModal} imageUrl={photo || ''} />
+        </>
+      )}
+    </Suspense>
   );
 }

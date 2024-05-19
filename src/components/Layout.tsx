@@ -1,5 +1,5 @@
 import { Link, Outlet, useNavigate } from 'react-router-dom'
-import { styled } from 'styled-components'
+import { styled } from '@linaria/react';
 import { auth } from '../firebase'
 import { HomeIcon, SearchIcon, BellIcon, ProfileIcon, LogoutIcon } from './icons'
 
