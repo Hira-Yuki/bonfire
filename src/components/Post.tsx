@@ -1,12 +1,11 @@
-import { IPost } from "../Timeline"
-import { auth, db, storage } from "../../firebase"
+import { IPost } from "./Timeline"
+import { auth, db, storage } from "../firebase"
 import { deleteDoc, doc, updateDoc } from "firebase/firestore";
 import { deleteObject, getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { usePostState } from "../../hooks/usePostState";
-import LoadingState from "./LoadingState";
-import EditingState from "./EditingState";
-import ViewingState from "./ViewingState";
-import ImageModal from "./ImageModal";
+import { usePostState } from "../hooks/usePostState";
+import { EditingState, ImageModal, LoadingState, ViewingState } from "./postcomponents";
+
+
 
 export default function Post({ username, photo, post, userId, id }: IPost) {
   const user = auth.currentUser

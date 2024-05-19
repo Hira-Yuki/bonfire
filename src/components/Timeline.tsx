@@ -2,7 +2,7 @@ import { Unsubscribe, collection, limit, onSnapshot, orderBy, query } from "fire
 import { useEffect, useState } from "react";
 import { styled } from "styled-components";
 import { db } from "../firebase";
-import Post from "./post";
+import Post from "./Post";
 
 export interface IPost {
   id: string;
