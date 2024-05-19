@@ -30,6 +30,7 @@ const EditingState: React.FC<EditingStateProps> = ({
   $removePhoto,
   error,
 }) => {
+
   return (
     <Wrapper>
       <Column>

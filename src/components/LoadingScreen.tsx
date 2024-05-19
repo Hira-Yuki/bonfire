@@ -1,14 +1,12 @@
 import { styled } from "styled-components"
 
-const LoadingScreen = () => {
+export default function LoadingScreen() {
   return (
     <Wrapper>
       <Text>Loading...</Text>
     </Wrapper>
   )
 }
-
-export default LoadingScreen;
 
 const Wrapper = styled.div`
   height: 100vh;

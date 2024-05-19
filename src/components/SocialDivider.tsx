@@ -1,12 +1,10 @@
 import { styled } from "styled-components"
 
-const SocialDivider = () => {
+export default function SocialDivider () {
   return (
     <Divider />
   )
 }
-
-export default SocialDivider
 
 const Divider = styled.hr`
     width: 100%;
