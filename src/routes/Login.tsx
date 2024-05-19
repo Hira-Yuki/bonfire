@@ -3,9 +3,7 @@ import { Link, useNavigate } from "react-router-dom"
 import { FirebaseError } from "firebase/app"
 import { signInWithEmailAndPassword } from "firebase/auth"
 import { auth } from "../firebase"
-import GithubButton from "../components/socialbutton/GithubButton"
-import GoogleButton from "../components/socialbutton/GoogleButton"
-import SocialDivider from "../components/SocialDivider"
+import { GithubButton, GoogleButton, SocialDivider } from "../components/socialbutton/"
 import {
   Form,
   Input,
