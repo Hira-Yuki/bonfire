@@ -3,8 +3,8 @@ import { useState } from "react"
 import { auth } from "../firebase"
 import { Link, useNavigate } from "react-router-dom"
 import { FirebaseError } from "firebase/app"
-import GithubButton from "../components/GithubButton"
-import GoogleButton from "../components/GoogleButton"
+import GithubButton from "../components/socialbutton/GithubButton"
+import GoogleButton from "../components/socialbutton/GoogleButton"
 import SocialDivider from "../components/SocialDivider"
 import {
   Form,
