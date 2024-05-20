@@ -3,7 +3,7 @@ import { auth, db, storage } from "../../firebase"
 import { deleteDoc, doc, updateDoc } from "firebase/firestore";
 import { deleteObject, getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { usePostState } from "../../hooks/usePostState";
-import React, { Suspense } from "react";
+import React from "react";
 
 // 동적 import 사용
 const EditingState = React.lazy(() => import("./EditingState"));
@@ -118,7 +118,7 @@ export default function Post({ username, photo, post, userId, id }: IPost) {
   const handleModal = () => setIsModalOpen(!isModalOpen);
 
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <>
       {isLoading ? (
         <LoadingState username={username} error={error} />
       ) : isEditing ? (
@@ -151,6 +151,6 @@ export default function Post({ username, photo, post, userId, id }: IPost) {
           <ImageModal isOpen={isModalOpen} onClose={handleModal} imageUrl={photo || ''} />
         </>
       )}
-    </Suspense>
+    </>
   );
 }
