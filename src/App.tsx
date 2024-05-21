@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { Suspense, useEffect, useState } from 'react';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import { auth } from './firebase';
 import LoadingScreen from './components/LoadingScreen';
@@ -25,7 +25,9 @@ const router = createBrowserRouter([
         path: '',
         element: (
           <ProtectedRoute>
-            <Home />
+            <Suspense fallback={<LoadingScreen />} >
+              <Home />
+            </Suspense>
           </ProtectedRoute>
         ),
       },
@@ -33,7 +35,9 @@ const router = createBrowserRouter([
         path: 'profile',
         element: (
           <ProtectedRoute>
-            <Profile />
+            <Suspense fallback={<LoadingScreen />} >
+              <Profile />
+            </Suspense>
           </ProtectedRoute>
         ),
       },
@@ -74,7 +78,7 @@ function App() {
   return (
     <Wrapper>
       {isLoading ? <LoadingScreen /> : <RouterProvider router={router} />}
-    </Wrapper>
+    </Wrapper >
   );
 }
 
