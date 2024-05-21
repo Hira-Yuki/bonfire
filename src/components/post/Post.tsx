@@ -3,7 +3,7 @@ import { auth, db, storage } from "../../firebase"
 import { deleteDoc, doc, updateDoc } from "firebase/firestore";
 import { deleteObject, getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { usePostState } from "../../hooks/usePostState";
-import React from "react";
+import React, { useEffect } from "react";
 
 // 동적 import 사용
 const EditingState = React.lazy(() => import("./EditingState"));
@@ -31,6 +31,10 @@ export default function Post({ username, photo, post, userId, id }: IPost) {
     isModalOpen,
     setIsModalOpen,
   } = usePostState(post, photo);
+
+  useEffect(() => {
+    setNewPhotoURL(photo)
+  }, [photo, setNewPhotoURL])
 
   const onDelete = async () => {
     const ok = confirm("포스트를 정말로 삭제할까요?")
