@@ -6,7 +6,7 @@ import { updateProfile } from "firebase/auth"
 import { collection, getDocs, limit, orderBy, query, where } from "firebase/firestore"
 import { IPost } from "../components/Timeline"
 import Post from "../components/post/Post"
-import { fileSizeChecker } from "../helper/fileControl"
+import { resizeFile } from "../helper/fileControl"
 
 export default function Profile() {
   const user = auth.currentUser
@@ -20,9 +20,10 @@ export default function Profile() {
     if (!user) return
     if (files && files.length === 1) {
       const file = files[0]
-      if (fileSizeChecker(file)) return
+      // if (fileSizeChecker(file)) return
+      const resizedFile = await resizeFile(file, 512, 512) as File
       const locationRef = ref(storage, `avatars/${user?.uid}`)
-      const result = await uploadBytes(locationRef, file)
+      const result = await uploadBytes(locationRef, resizedFile)
       const avatarURL = await getDownloadURL(result.ref)
       setAvatar(avatarURL)
       await updateProfile(user, {
@@ -133,6 +134,7 @@ const AvatarUpload = styled.label`
 
 const AvatarImg = styled.img`
   width: 100%;
+  height: 100%;
 `
 
 const AvatarInput = styled.input`
