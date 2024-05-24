@@ -1,18 +1,18 @@
-import React, { Suspense, useEffect, useState } from 'react';
-import { RouterProvider, createBrowserRouter } from 'react-router-dom';
+import React, { Suspense, useEffect, useState } from 'react'
+import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 import { auth } from './firebase';
-import LoadingScreen from './components/LoadingScreen';
-import ProtectedRoute from './components/ProtectedRoute';
-import { styled } from '@linaria/react';
-import './reset.css';
+import LoadingScreen from './components/LoadingScreen'
+import ProtectedRoute from './components/ProtectedRoute'
+import { styled } from '@linaria/react'
+import './reset.css'
 
 // 동적 임포트를 사용하여 코드 스플리팅
 const Layout = React.lazy(() => import('./components/Layout'));
 const Home = React.lazy(() => import('./routes/Home'));
 const Profile = React.lazy(() => import('./routes/Profile'));
 const Login = React.lazy(() => import('./routes/Login'));
-const CreateAccount = React.lazy(() => import('./routes/CreateAccount'));
-const ResetPassword = React.lazy(() => import('./routes/ResetPassword'));
+const CreateAccount = React.lazy(() => import('./routes/CreateAccount'))
+const ResetPassword = React.lazy(() => import('./routes/ResetPassword'))
 
 const router = createBrowserRouter([
   {
@@ -61,19 +61,19 @@ const router = createBrowserRouter([
       <ResetPassword />
     ),
   },
-]);
+])
 
 function App() {
-  const [isLoading, setLoading] = useState(true);
+  const [isLoading, setLoading] = useState(true)
 
   const init = async () => {
-    await auth.authStateReady();
-    setLoading(false);
+    await auth.authStateReady()
+    setLoading(false)
   };
 
   useEffect(() => {
-    init();
-  }, []);
+    init()
+  }, [])
 
   return (
     <Wrapper>
@@ -82,7 +82,7 @@ function App() {
   );
 }
 
-export default App;
+export default App
 
 const Wrapper = styled.div`
   height: 100%;
