@@ -4,6 +4,7 @@ import { styled } from '@linaria/react';
 
 import { auth, db, storage } from "../firebase";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { fileSizeChecker } from "../helper/fileControl";
 
 const MAX_POST_LENGTH = 300
 
