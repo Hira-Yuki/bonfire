@@ -1,11 +1,12 @@
 import { styled } from "@linaria/react"
 import { auth, db, storage } from "../firebase"
-import React, { useEffect, useState } from "react"
+import React, { useCallback, useEffect, useState } from "react"
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage"
 import { updateProfile } from "firebase/auth"
 import { collection, getDocs, limit, orderBy, query, where } from "firebase/firestore"
 import { IPost } from "../components/Timeline"
 import Post from "../components/post/Post"
+import { fileSizeChecker } from "../helper/fileControl"
 
 export default function Profile() {
   const user = auth.currentUser
@@ -19,6 +20,7 @@ export default function Profile() {
     if (!user) return
     if (files && files.length === 1) {
       const file = files[0]
+      if (fileSizeChecker(file)) return
       const locationRef = ref(storage, `avatars/${user?.uid}`)
       const result = await uploadBytes(locationRef, file)
       const avatarURL = await getDownloadURL(result.ref)
@@ -29,7 +31,7 @@ export default function Profile() {
     }
   }
 
-  const onChangeNameClick = async () => {
+  const handleChangeNameClick = async () => {
     if (!user) return;
     setEditMode((prev) => !prev);
     if (!editMode) return;
@@ -44,33 +46,34 @@ export default function Profile() {
     }
   };
 
-  const onNameChange = (event: React.ChangeEvent<HTMLInputElement>) =>
+  const handleName = (event: React.ChangeEvent<HTMLInputElement>) =>
     setName(event.target.value);
 
+  const fetchPosts = useCallback(async () => {
+    const postQuery = query(
+      collection(db, "posts"),
+      where("userId", "==", user?.uid),
+      orderBy("createdAt", "desc"),
+      limit(20)
+    )
+    const snapshot = await getDocs(postQuery)
+    const posts = snapshot.docs.map(doc => {
+      const { post, createdAt, userId, username, photo } = doc.data()
+      return {
+        post,
+        createdAt,
+        userId,
+        username,
+        photo,
+        id: doc.id
+      }
+    })
+    setPosts(posts)
+  }, [user?.uid]);
+
   useEffect(() => {
-    const fetchPosts = async () => {
-      const postQuery = query(
-        collection(db, "posts"),
-        where("userId", "==", user?.uid),
-        orderBy("createdAt", "desc"),
-        limit(20)
-      )
-      const snapshot = await getDocs(postQuery)
-      const posts = snapshot.docs.map(doc => {
-        const { post, createdAt, userId, username, photo } = doc.data()
-        return {
-          post,
-          createdAt,
-          userId,
-          username,
-          photo,
-          id: doc.id
-        }
-      })
-      setPosts(posts)
-    }
     fetchPosts()
-  }, [user?.uid, posts])
+  }, [fetchPosts])
 
   return (
     <Wrapper>
@@ -90,11 +93,11 @@ export default function Profile() {
         onChange={handleAvatarChange}
       />
       {editMode ? (
-        <NameInput onChange={onNameChange} type="text" value={name} />
+        <NameInput onChange={handleName} type="text" value={name} />
       ) : (
         <Name>{name ?? "Anonymous"}</Name>
       )}
-      <ChangeNameBtn onClick={onChangeNameClick}>
+      <ChangeNameBtn onClick={handleChangeNameClick}>
         {editMode ? "Save" : "Change Name"}
       </ChangeNameBtn>
       <Posts>

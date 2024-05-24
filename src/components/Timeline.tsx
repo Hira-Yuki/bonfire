@@ -43,6 +43,7 @@ const Timeline = () => {
       unsubscribe && unsubscribe()
     }
   }, [])
+
   return (
     <Wrapper>
       {

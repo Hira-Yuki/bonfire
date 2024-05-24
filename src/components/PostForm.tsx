@@ -22,12 +22,9 @@ const PostForm = () => {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { files } = e.target
     if (files && files.length === 1) {
-      const selectedFile = files[0]
-      if (selectedFile.size > 1048576) {
-        alert("파일 크기가 1MB를 초과합니다. 다른 파일을 선택해 주세요.")
-        return
-      }
-      setFile(selectedFile)
+      const file = files[0]
+      if (fileSizeChecker(file)) return
+      setFile(file)
       const reader = new FileReader()
       reader.onloadend = () => {
         setPreview(reader.result as string)

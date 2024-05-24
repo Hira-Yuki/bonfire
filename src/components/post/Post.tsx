@@ -5,6 +5,7 @@ import { deleteObject, getDownloadURL, uploadBytes } from "firebase/storage";
 import { usePostState } from "../../hooks/usePostState";
 import React, { Suspense, useEffect } from "react";
 import { deletePhotoFromStorage, deletePostFromFirestore, getRef, isNotCurrentUser } from "../../helper/PostControl";
+import { fileSizeChecker } from "../../helper/fileControl";
 
 // 동적 import 사용
 const EditingState = React.lazy(() => import("./EditingState"));
@@ -62,17 +63,14 @@ export default function Post({ username, photo, post, userId, id }: IPost) {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { files } = e.target
     if (files && files.length === 1) {
-      const selectedFile = files[0]
-      if (selectedFile.size > 1048576) {
-        alert("파일 크기가 1MB를 초과합니다. 다른 파일을 선택해 주세요.")
-        return
-      }
-      setNewPhoto(selectedFile)
+      const file = files[0]
+      if (fileSizeChecker(file)) return
+      setNewPhoto(file)
       const reader = new FileReader()
       reader.onloadend = () => {
         setNewPhotoURL(reader.result as string)
       }
-      reader.readAsDataURL(selectedFile)
+      reader.readAsDataURL(file)
     }
   }
 
