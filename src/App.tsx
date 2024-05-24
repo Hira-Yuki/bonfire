@@ -5,6 +5,7 @@ import LoadingScreen from './components/LoadingScreen'
 import ProtectedRoute from './components/ProtectedRoute'
 import { styled } from '@linaria/react'
 import './reset.css'
+import Search from './routes/Search';
 
 // 동적 임포트를 사용하여 코드 스플리팅
 const Layout = React.lazy(() => import('./components/Layout'));
@@ -37,6 +38,16 @@ const router = createBrowserRouter([
           <ProtectedRoute>
             <Suspense fallback={<LoadingScreen />} >
               <Profile />
+            </Suspense>
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'search',
+        element: (
+          <ProtectedRoute>
+            <Suspense fallback={<LoadingScreen />} >
+              <Search />
             </Suspense>
           </ProtectedRoute>
         ),
