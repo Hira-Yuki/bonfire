@@ -52,9 +52,9 @@ const CreateAccount = () => {
       // 유저 계정 생성시 이름이 필요하지 않음, 가입시 입력 받은 것을 이용해서 바로 업데이트 해줌
       await updateProfile(credentials.user, { displayName: name, })
       navigate("/")
-    } catch (e) {
-      if (e instanceof FirebaseError) {
-        setError(e.message)
+    } catch (error) {
+      if (error instanceof FirebaseError) {
+        setError(error.message)
       }
     } finally {
       setLoading(false)

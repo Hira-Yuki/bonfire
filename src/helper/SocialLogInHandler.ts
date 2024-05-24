@@ -6,6 +6,7 @@ import {
 } from "firebase/auth";
 import { auth } from "../firebase";
 import { SOCIAL_PROVIDERS, SocialProviderType } from "../constants/social";
+import { FirebaseError } from "firebase/app";
 
 export const SocialLogInHandler = async (providerType: SocialProviderType) => {
   const navigate = useNavigate();
@@ -24,6 +25,9 @@ export const SocialLogInHandler = async (providerType: SocialProviderType) => {
     await signInWithPopup(auth, provider);
     navigate("/"); 
   } catch (error) {
+    if (error instanceof FirebaseError) {
+      alert(error.message)
+    }
     console.error(error);
   }
 };

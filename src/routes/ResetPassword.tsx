@@ -26,9 +26,9 @@ const ResetPassword = () => {
       await sendPasswordResetEmail(auth, email)
       alert("입력하신 이메일로 비밀번호 재설정 메일을 발송했습니다.")
       navigate("/")
-    } catch (e) {
-      if (e instanceof FirebaseError) {
-        setError(e.message)
+    } catch (error) {
+      if (error instanceof FirebaseError) {
+        setError(error.message)
       }
     } finally {
       setLoading(false)

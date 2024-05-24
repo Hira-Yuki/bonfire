@@ -5,6 +5,7 @@ import { styled } from '@linaria/react';
 import { auth, db, storage } from "../firebase";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { fileSizeChecker } from "../helper/fileControl";
+import { FirebaseError } from "firebase/app";
 
 const MAX_POST_LENGTH = 300
 
@@ -65,8 +66,11 @@ const PostForm = () => {
         })
       }
       clearForm()
-    } catch (e) {
-      console.error(e)
+    } catch (error) {
+      if (error instanceof FirebaseError) {
+        alert(error.message)
+      }
+      console.error(error)
     } finally {
       setLoading(false)
     }

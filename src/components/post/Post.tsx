@@ -6,6 +6,7 @@ import { usePostState } from "../../hooks/usePostState";
 import React, { Suspense, useEffect } from "react";
 import { deletePhotoFromStorage, deletePostFromFirestore, getRef, isNotCurrentUser } from "../../helper/PostControl";
 import { fileSizeChecker } from "../../helper/fileControl";
+import { FirebaseError } from "firebase/app";
 
 // 동적 import 사용
 const EditingState = React.lazy(() => import("./EditingState"));
@@ -48,9 +49,11 @@ export default function Post({ username, photo, post, userId, id }: IPost) {
       if (photo) {
         await deletePhotoFromStorage(id)
       }
-    } catch (e) {
-      setError("포스트 삭제에 실패했습니다. 문제가 계속되면 관리자에게 문의해주세요.");
-      console.error(e);
+    } catch (error) {
+      if (error instanceof FirebaseError) {
+        setError("포스트 삭제에 실패했습니다. 문제가 계속되면 관리자에게 문의해주세요." + error.message);
+      }
+      console.error(error);
     } finally {
       setIsLoading(false)
     }
@@ -102,9 +105,11 @@ export default function Post({ username, photo, post, userId, id }: IPost) {
         })
       }
       setIsEditing(false)
-    } catch (e) {
-      setError("포스트 업데이트에 실패했습니다. 문제가 계속되면 관리자에게 문의해 주세요.");
-      console.error(e);
+    } catch (error) {
+      if (error instanceof FirebaseError) {
+        setError("포스트 업데이트에 실패했습니다. 문제가 계속되면 관리자에게 문의해 주세요." + error.message);
+      }
+      console.error(error);
     } finally {
       set$RemovePhoto(false)
       setIsLoading(false)

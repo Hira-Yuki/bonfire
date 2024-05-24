@@ -9,7 +9,7 @@ export const fileSizeChecker = (file: File) => {
 };
 
 export const resizeFile = (file: File, maxWidth: number, maxHeight: number) =>
-  new Promise((resolve) => {
+  new Promise<File>((resolve) => {
     Resizer.imageFileResizer(
       file,
       maxWidth,
@@ -18,7 +18,7 @@ export const resizeFile = (file: File, maxWidth: number, maxHeight: number) =>
       100,
       0,
       (url) => {
-        resolve(url);
+        resolve(url as File);
       },
       "file"
     );
