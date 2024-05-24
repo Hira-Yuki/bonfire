@@ -5,13 +5,13 @@ interface EditingStateProps {
   username: string;
   editedPost: string;
   onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
-  onEdit: () => void;
+  handleEdit: () => void;
   onCancel: () => void;
   newPhotoURL?: string;
   photo?: string | null;
   newPhoto: File | null;
-  onFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  removeFile: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  handleFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleRemoveFile: (e: React.MouseEvent<HTMLButtonElement>) => void;
   $removePhoto: boolean;
   error: string | null;
 }
@@ -20,13 +20,13 @@ const EditingState: React.FC<EditingStateProps> = ({
   username,
   editedPost,
   onChange,
-  onEdit,
+  handleEdit,
   onCancel,
   newPhotoURL,
   photo,
   newPhoto,
-  onFileChange,
-  removeFile,
+  handleFileChange,
+  handleRemoveFile,
   $removePhoto,
   error,
 }) => {
@@ -37,7 +37,7 @@ const EditingState: React.FC<EditingStateProps> = ({
         <Username>{username}</Username>
         <div>
           <TextArea value={editedPost} onChange={onChange} />
-          <SaveButton onClick={onEdit}>Save</SaveButton>
+          <SaveButton onClick={handleEdit}>Save</SaveButton>
           <CancelButton onClick={onCancel}>Cancel</CancelButton>
           {error && <ErrorMessage>{error}</ErrorMessage>}
         </div>
@@ -48,7 +48,7 @@ const EditingState: React.FC<EditingStateProps> = ({
             {photo ? (
               <ImagePreviewContainer>
                 <Photo src={newPhotoURL} alt="New Post" $removePhoto={$removePhoto} />
-                <RemoveImageButton onClick={removeFile}>
+                <RemoveImageButton onClick={handleRemoveFile}>
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
                     <path
                       fillRule="evenodd"
@@ -64,7 +64,7 @@ const EditingState: React.FC<EditingStateProps> = ({
               <div>이미지 추가하기</div>
             )}
           </AttachFileLabel>
-          <AttachFileInput type="file" id="new-file" accept="image/*" onChange={onFileChange} />
+          <AttachFileInput type="file" id="new-file" accept="image/*" onChange={handleFileChange} />
         </div>
       </Column>
     </Wrapper>

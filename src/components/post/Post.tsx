@@ -3,7 +3,7 @@ import { auth, db, storage } from "../../firebase"
 import { deleteDoc, doc, updateDoc } from "firebase/firestore";
 import { deleteObject, getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { usePostState } from "../../hooks/usePostState";
-import React, { useEffect } from "react";
+import React, { Suspense, useEffect } from "react";
 
 // 동적 import 사용
 const EditingState = React.lazy(() => import("./EditingState"));
@@ -36,7 +36,7 @@ export default function Post({ username, photo, post, userId, id }: IPost) {
     setNewPhotoURL(photo)
   }, [photo, setNewPhotoURL])
 
-  const onDelete = async () => {
+  const handleDelete = async () => {
     const ok = confirm("포스트를 정말로 삭제할까요?")
     if (!ok || user?.uid !== userId) return
 
@@ -59,7 +59,7 @@ export default function Post({ username, photo, post, userId, id }: IPost) {
     setEditedPost(e.target.value)
   }
 
-  const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { files } = e.target
     if (files && files.length === 1) {
       const selectedFile = files[0]
@@ -76,7 +76,7 @@ export default function Post({ username, photo, post, userId, id }: IPost) {
     }
   }
 
-  const onEdit = async () => {
+  const handleEdit = async () => {
     if (user?.uid !== userId) return;
     try {
       setIsLoading(true)
@@ -114,7 +114,7 @@ export default function Post({ username, photo, post, userId, id }: IPost) {
     }
   }
 
-  const removeFile = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleRemoveFile = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()
     set$RemovePhoto(!$removePhoto)
   }
@@ -122,7 +122,7 @@ export default function Post({ username, photo, post, userId, id }: IPost) {
   const handleModal = () => setIsModalOpen(!isModalOpen);
 
   return (
-    <>
+    <Suspense fallback={null}>
       {isLoading ? (
         <LoadingState username={username} error={error} />
       ) : isEditing ? (
@@ -130,13 +130,13 @@ export default function Post({ username, photo, post, userId, id }: IPost) {
           username={username}
           editedPost={editedPost}
           onChange={onChange}
-          onEdit={onEdit}
+          handleEdit={handleEdit}
           onCancel={() => setIsEditing(false)}
           newPhotoURL={newPhotoURL}
           photo={photo}
           newPhoto={newPhoto}
-          onFileChange={onFileChange}
-          removeFile={removeFile}
+          handleFileChange={handleFileChange}
+          handleRemoveFile={handleRemoveFile}
           $removePhoto={$removePhoto}
           error={error}
         />
@@ -146,8 +146,8 @@ export default function Post({ username, photo, post, userId, id }: IPost) {
             username={username}
             post={post}
             photo={photo}
-            onDelete={onDelete}
-            onEdit={() => setIsEditing(true)}
+            handleDelete={handleDelete}
+            handleEdit={() => setIsEditing(true)}
             userOwnsPost={user?.uid === userId}
             error={error}
             onImageClick={handleModal}
@@ -155,6 +155,6 @@ export default function Post({ username, photo, post, userId, id }: IPost) {
           <ImageModal isOpen={isModalOpen} onClose={handleModal} imageUrl={photo || ''} />
         </>
       )}
-    </>
+    </Suspense>
   );
 }

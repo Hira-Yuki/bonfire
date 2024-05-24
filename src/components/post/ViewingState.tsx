@@ -5,8 +5,8 @@ interface ViewingStateProps {
   username: string;
   post: string;
   photo?: string | null;
-  onDelete: () => void;
-  onEdit: () => void;
+  handleDelete: () => void;
+  handleEdit: () => void;
   userOwnsPost: boolean;
   error: string | null;
   onImageClick: () => void;
@@ -16,8 +16,8 @@ const ViewingState: React.FC<ViewingStateProps> = ({
   username,
   post,
   photo,
-  onDelete,
-  onEdit,
+  handleDelete,
+  handleEdit,
   userOwnsPost,
   error,
   onImageClick,
@@ -29,8 +29,8 @@ const ViewingState: React.FC<ViewingStateProps> = ({
         <Payload>{post}</Payload>
         {userOwnsPost && (
           <ModifyWrapper>
-            <DeleteButton onClick={onDelete}>Delete</DeleteButton>
-            <ModifyButton onClick={onEdit}>Edit</ModifyButton>
+            <DeleteButton onClick={handleDelete}>Delete</DeleteButton>
+            <ModifyButton onClick={handleEdit}>Edit</ModifyButton>
           </ModifyWrapper>
         )}
         {error && <ErrorMessage>{error}</ErrorMessage>}
