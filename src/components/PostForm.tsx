@@ -1,11 +1,12 @@
 import { addDoc, collection, updateDoc } from "firebase/firestore";
 import { useState } from "react";
 import { styled } from '@linaria/react';
-
 import { auth, db, storage } from "../firebase";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { fileSizeChecker } from "../helper/fileControl";
 import { FirebaseError } from "firebase/app";
+import DeleteButton from "./icons/DeleteButton";
+import AddPhotoButton from "./icons/AddPhotoButton";
 
 const MAX_POST_LENGTH = 300
 
@@ -39,7 +40,7 @@ const PostForm = () => {
     setFile(null)
     setPreview(null)
   }
-  
+
   const clearForm = () => {
     setPost("")
     handleRemoveFile()
@@ -97,7 +98,6 @@ const PostForm = () => {
       <TextArea
         required
         rows={5}
-        // maxLength={MAX_POST_LENGTH}
         onChange={onChange}
         value={post}
         placeholder="무슨 일이 일어나고 있나요?" />
@@ -106,9 +106,7 @@ const PostForm = () => {
           <ImagePreview src={preview} alt="Preview" />
           <RemoveImageButton onClick={handleRemoveFile}>
             {/* 이미지 삭제 */}
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
-              <path fillRule="evenodd" d="M6.75 3A2.25 2.25 0 0 0 4.5 5.25v.75H3a.75.75 0 0 0 0 1.5h1.5v10.5A2.25 2.25 0 0 0 6.75 20.25h10.5A2.25 2.25 0 0 0 19.5 18V7.5H21a.75.75 0 0 0 0-1.5h-1.5V5.25A2.25 2.25 0 0 0 17.25 3H6.75Zm7.5 13.5a.75.75 0 0 1-1.5 0V9a.75.75 0 0 1 1.5 0v7.5Zm-4.5 0a.75.75 0 0 1-1.5 0V9a.75.75 0 0 1 1.5 0v7.5Z" clipRule="evenodd" />
-            </svg>
+            <DeleteButton />
           </RemoveImageButton>
         </ImagePreviewContainer>
       ) : (
@@ -118,9 +116,7 @@ const PostForm = () => {
       <OptionsWrapper>
         <AttachFileButton htmlFor="file">
           {/* 사진 첨부 */}
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
-            <path fillRule="evenodd" d="M1.5 6a2.25 2.25 0 0 1 2.25-2.25h16.5A2.25 2.25 0 0 1 22.5 6v12a2.25 2.25 0 0 1-2.25 2.25H3.75A2.25 2.25 0 0 1 1.5 18V6ZM3 16.06V18c0 .414.336.75.75.75h16.5A.75.75 0 0 0 21 18v-1.94l-2.69-2.689a1.5 1.5 0 0 0-2.12 0l-.88.879.97.97a.75.75 0 1 1-1.06 1.06l-5.16-5.159a1.5 1.5 0 0 0-2.12 0L3 16.061Zm10.125-7.81a1.125 1.125 0 1 1 2.25 0 1.125 1.125 0 0 1-2.25 0Z" clipRule="evenodd" />
-          </svg>
+          <AddPhotoButton />
         </AttachFileButton>
         <AttachFileInput
           onChange={handleFileChange}
