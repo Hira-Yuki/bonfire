@@ -23,7 +23,7 @@ const Timeline = () => {
         orderBy("createdAt", "desc"),
         limit(20),
       )
-      unsubscribe = await onSnapshot(postsQuery, (snapshot) => {
+      unsubscribe = onSnapshot(postsQuery, (snapshot) => {
         const posts = snapshot.docs.map((doc) => {
           const { post, createdAt, userId, username, photo } = doc.data()
           return {

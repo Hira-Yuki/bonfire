@@ -1,9 +1,10 @@
 import { IPost } from "../Timeline"
-import { auth, db, storage } from "../../firebase"
-import { deleteDoc, doc, updateDoc } from "firebase/firestore";
-import { deleteObject, getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { auth, db } from "../../firebase"
+import { doc, updateDoc } from "firebase/firestore";
+import { deleteObject, getDownloadURL, uploadBytes } from "firebase/storage";
 import { usePostState } from "../../hooks/usePostState";
 import React, { Suspense, useEffect } from "react";
+import { deletePhotoFromStorage, deletePostFromFirestore, getRef, isNotCurrentUser } from "../../helper/PostControl";
 
 // 동적 import 사용
 const EditingState = React.lazy(() => import("./EditingState"));
@@ -38,14 +39,13 @@ export default function Post({ username, photo, post, userId, id }: IPost) {
 
   const handleDelete = async () => {
     const ok = confirm("포스트를 정말로 삭제할까요?")
-    if (!ok || user?.uid !== userId) return
+    if (!ok || isNotCurrentUser(userId)) return
 
     try {
       setIsLoading(true)
-      await deleteDoc(doc(db, "posts", id))
+      await deletePostFromFirestore(id)
       if (photo) {
-        const photoRef = ref(storage, `posts/${user.uid}/${id}`)
-        await deleteObject(photoRef)
+        await deletePhotoFromStorage(id)
       }
     } catch (e) {
       setError("포스트 삭제에 실패했습니다. 문제가 계속되면 관리자에게 문의해주세요.");
@@ -77,7 +77,7 @@ export default function Post({ username, photo, post, userId, id }: IPost) {
   }
 
   const handleEdit = async () => {
-    if (user?.uid !== userId) return;
+    if (isNotCurrentUser(userId)) return;
     try {
       setIsLoading(true)
       const postRef = doc(db, "posts", id);
@@ -86,18 +86,17 @@ export default function Post({ username, photo, post, userId, id }: IPost) {
       })
 
       if ($removePhoto) {
-        const photoRef = ref(storage, `posts/${user.uid}/${id}`)
-        await deleteObject(photoRef)
+        await deletePhotoFromStorage(id)
         await updateDoc(postRef, {
           photo: null
         })
       }
 
       if (newPhoto) {
-        const photoRef = ref(storage, `posts/${user.uid}/${id}`)
+        const photoRef = await getRef(id)
         if (photo) await deleteObject(photoRef)
 
-        const locationRef = ref(storage, `posts/${user.uid}/${id}`)
+        const locationRef = await getRef(id)
         const result = await uploadBytes(locationRef, newPhoto)
         const url = await getDownloadURL(result.ref)
         await updateDoc(postRef, {
