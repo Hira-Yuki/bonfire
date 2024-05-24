@@ -11,6 +11,8 @@ export default function Profile() {
   const user = auth.currentUser
   const [avatar, setAvatar] = useState(user?.photoURL)
   const [posts, setPosts] = useState<IPost[]>([])
+  const [name, setName] = useState(user?.displayName ?? "Anonymous");
+  const [editMode, setEditMode] = useState(false);
 
   const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const { files } = e.target
@@ -26,6 +28,24 @@ export default function Profile() {
       })
     }
   }
+
+  const onChangeNameClick = async () => {
+    if (!user) return;
+    setEditMode((prev) => !prev);
+    if (!editMode) return;
+    try {
+      await updateProfile(user, {
+        displayName: name,
+      });
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setEditMode(false)
+    }
+  };
+
+  const onNameChange = (event: React.ChangeEvent<HTMLInputElement>) =>
+    setName(event.target.value);
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -63,10 +83,20 @@ export default function Profile() {
           </svg>
         )}
       </AvatarUpload>
-      <AvatarInput id="avatar" type="file" accept="image/*" onChange={handleAvatarChange} />
-      <Name>
-        {user?.displayName ?? "Anonymous"}
-      </Name>
+      <AvatarInput
+        id="avatar"
+        type="file"
+        accept="image/*"
+        onChange={handleAvatarChange}
+      />
+      {editMode ? (
+        <NameInput onChange={onNameChange} type="text" value={name} />
+      ) : (
+        <Name>{name ?? "Anonymous"}</Name>
+      )}
+      <ChangeNameBtn onClick={onChangeNameClick}>
+        {editMode ? "Save" : "Change Name"}
+      </ChangeNameBtn>
       <Posts>
         {posts.map(post =>
           (<Post key={post.id} {...post} />)
@@ -114,4 +144,25 @@ const Posts = styled.div`
   flex-direction: column;
   gap: 10px;
   width: 100%;
+`
+
+const NameInput = styled.input`
+  background-color: black;
+  font-size: 22px;
+  text-align: center;
+  color: white;
+  border: 1px solid white;
+  border-radius: 15px;
+`
+
+const ChangeNameBtn = styled.button`
+  background-color: #1d9bf0;;
+  color: white;
+  font-weight: 600;
+  border: 0;
+  font-size: 12px;
+  padding: 10px 10px;
+  text-transform: uppercase;
+  border-radius: 5px;
+  cursor: pointer;
 `
