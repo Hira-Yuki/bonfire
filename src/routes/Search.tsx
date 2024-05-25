@@ -6,6 +6,8 @@ import { db } from "../firebase";
 import Post from "../components/post/Post";
 import { IPost } from "../components/Timeline";
 import { FirebaseError } from "firebase/app";
+import debounce from "../helper/Debounce";
+
 
 export default function Search() {
   const [searchTerm, setSearchTerm] = useState("")
@@ -13,43 +15,78 @@ export default function Search() {
   const [loading, setLoading] = useState(false);
   const [empty, setEmpty] = useState(false);
 
+  useEffect(() => {
+    const debouncedSearch = debounce(async (value: string) => {
+      if (value.length === 0) return;
+      try {
+        setLoading(true);
+        const q = query(
+          collection(db, "posts"),
+          where("username", ">=", value),
+          where("username", "<=", value + "\uf8ff"),
+          limit(10)
+        );
+        const querySnapshot = await getDocs(q);
+        const searchResults: IPost[] = [];
+        querySnapshot.forEach((doc) => {
+          searchResults.push({ ...doc.data(), id: doc.id } as IPost);
+        });
+        setResults(searchResults);
+      } catch (error) {
+        if (error instanceof FirebaseError) {
+          alert(error.message);
+        }
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    }, 300);
+
+    debouncedSearch(searchTerm);
+
+    return () => {
+      debouncedSearch.cancel();
+    };
+  }, [searchTerm]);
+
   const onChangeSearchTerm = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value)
-  }
+    setSearchTerm(e.target.value);
+  };
 
   useEffect(() => {
-    if (!loading && results.length === 0) {
+    if (!loading && results.length === 0 && searchTerm.length > 0) {
       setEmpty(true);
     } else {
       setEmpty(false);
     }
-  }, [loading, results]);
-  
+  }, [loading, results, searchTerm]);
+
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    if (searchTerm.length === 0) return
-    try {
-      setLoading(true)
-      const q = query(
-        collection(db, "posts"),
-        where("username", ">=", searchTerm),
-        where("username", "<=", searchTerm + "\uf8ff"),
-        limit(10)
-      );
-      const querySnapshot = await getDocs(q);
-      const searchResults: IPost[] = [];
-      querySnapshot.forEach((doc) => {
-        searchResults.push({ ...doc.data(), id: doc.id } as IPost);
-      });
-      setResults(searchResults);
-    } catch (error) {
-      if (error instanceof FirebaseError) {
-        alert(error.message)
-      }
-      console.error(error)
-    } finally {
-      setLoading(false)
-    }
+    setSearchTerm("")
+    // if (searchTerm.length === 0) return
+    // try {
+    //   setLoading(true)
+    //   const q = query(
+    //     collection(db, "posts"),
+    //     where("username", ">=", searchTerm),
+    //     where("username", "<=", searchTerm + "\uf8ff"),
+    //     limit(10)
+    //   );
+    //   const querySnapshot = await getDocs(q);
+    //   const searchResults: IPost[] = [];
+    //   querySnapshot.forEach((doc) => {
+    //     searchResults.push({ ...doc.data(), id: doc.id } as IPost);
+    //   });
+    //   setResults(searchResults);
+    // } catch (error) {
+    //   if (error instanceof FirebaseError) {
+    //     alert(error.message)
+    //   }
+    //   console.error(error)
+    // } finally {
+    //   setLoading(false)
+    // }
   }
 
   return (
