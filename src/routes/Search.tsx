@@ -64,29 +64,6 @@ export default function Search() {
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setSearchTerm("")
-    // if (searchTerm.length === 0) return
-    // try {
-    //   setLoading(true)
-    //   const q = query(
-    //     collection(db, "posts"),
-    //     where("username", ">=", searchTerm),
-    //     where("username", "<=", searchTerm + "\uf8ff"),
-    //     limit(10)
-    //   );
-    //   const querySnapshot = await getDocs(q);
-    //   const searchResults: IPost[] = [];
-    //   querySnapshot.forEach((doc) => {
-    //     searchResults.push({ ...doc.data(), id: doc.id } as IPost);
-    //   });
-    //   setResults(searchResults);
-    // } catch (error) {
-    //   if (error instanceof FirebaseError) {
-    //     alert(error.message)
-    //   }
-    //   console.error(error)
-    // } finally {
-    //   setLoading(false)
-    // }
   }
 
   return (
