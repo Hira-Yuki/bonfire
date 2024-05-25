@@ -5,8 +5,7 @@ import { auth, db, storage } from "../firebase";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { fileSizeChecker } from "../helper/fileControl";
 import { FirebaseError } from "firebase/app";
-import DeleteButton from "./icons/DeleteButton";
-import AddPhotoButton from "./icons/AddPhotoButton";
+import { DeleteButton, AddPhotoButton } from "./icons";
 
 const MAX_POST_LENGTH = 300
 
