@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { styled } from '@linaria/react';
 import { db } from "../firebase";
 import Post from "./post/Post";
+import { useNavigate } from "react-router-dom";
 
 export interface IPost {
   id: string;
@@ -19,6 +20,7 @@ const Timeline = () => {
   const [lastDoc, setLastDoc] = useState<QueryDocumentSnapshot | null>(null);
   const [hasMore, setHasMore] = useState(true);
   const observer = useRef<IntersectionObserver | null>(null);
+  const navigate = useNavigate()
 
   const PAGE_SIZE = 5;
 
@@ -119,9 +121,9 @@ const Timeline = () => {
             );
           } else {
             return (
-              <div key={post.id}>
+              <Links key={post.id} onClick={() => navigate(`/post/${post.id}`)}>
                 <Post {...post} />
-              </div>
+              </Links>
             );
           }
         })
@@ -140,3 +142,7 @@ const Wrapper = styled.div`
   flex-direction: column;
   overflow-y: scroll;
 `;
+
+const Links = styled.div`
+  cursor: pointer;
+`

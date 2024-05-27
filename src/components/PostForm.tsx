@@ -6,8 +6,7 @@ import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { fileSizeChecker } from "../helper/fileControl";
 import { FirebaseError } from "firebase/app";
 import { DeleteButton, AddPhotoButton } from "./icons";
-
-const MAX_POST_LENGTH = 300
+import { MAX_POST_LENGTH } from "../constants/maxlangth";
 
 const PostForm = () => {
   const [isLoading, setLoading] = useState(false)

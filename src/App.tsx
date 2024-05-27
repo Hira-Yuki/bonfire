@@ -7,6 +7,8 @@ import { styled } from '@linaria/react'
 import './reset.css'
 import Search from './routes/Search';
 import Notices from './routes/Notices';
+import Detail from './routes/Detail';
+import NotFound from './routes/NotFound';
 
 // 동적 임포트를 사용하여 코드 스플리팅
 const Layout = React.lazy(() => import('./components/Layout'));
@@ -61,6 +63,32 @@ const router = createBrowserRouter([
               <Notices />
             </Suspense>
           </ProtectedRoute>
+        ),
+      },
+      {
+        path: '/post/:id',
+        element: (
+          <Suspense fallback={<LoadingScreen />} >
+            <Detail />
+          </Suspense>
+        ),
+      },
+      {
+        path: '/not-found',
+        element: (
+          <Suspense fallback={<LoadingScreen />} >
+            <NotFound />
+          </Suspense>
+        ),
+      },
+      {
+        // 지정되지 않은 주소로 이동하려 할 경우 404 컴포넌트를 보여줌
+        // 주소를 리다이렉트하지 않음.
+        path: '*',
+        element: (
+          <Suspense fallback={<LoadingScreen />} >
+            <NotFound />
+          </Suspense>
         ),
       },
     ],

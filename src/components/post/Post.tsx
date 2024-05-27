@@ -39,7 +39,8 @@ export default function Post({ username, photo, post, userId, id }: IPost) {
     setNewPhotoURL(photo)
   }, [photo, setNewPhotoURL])
 
-  const handleDelete = async () => {
+  const handleDelete = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation()
     const ok = confirm("포스트를 정말로 삭제할까요?")
     if (!ok || isNotCurrentUser(userId)) return
 
