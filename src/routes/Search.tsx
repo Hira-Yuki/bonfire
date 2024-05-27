@@ -1,12 +1,14 @@
 import { styled } from "@linaria/react"
 import { SearchIcon } from "../components/icons"
-import { useEffect, useState } from "react"
+import { Suspense, useEffect, useState } from "react"
 import { collection, getDocs, limit, query, where } from "firebase/firestore";
 import { db } from "../firebase";
-import Post from "../components/post/Post";
 import { IPost } from "../components/Timeline";
 import { FirebaseError } from "firebase/app";
 import debounce from "../helper/Debounce";
+import React from "react";
+
+const Post = React.lazy(() => import("../components/post/Post"));
 
 
 export default function Search() {
@@ -85,7 +87,9 @@ export default function Search() {
         {loading && <div>Loading...</div>}
         {empty && !loading && <div>검색 결과가 없습니다.</div>}
         {results.map((post) => (
-          <Post key={post.id} {...post} />
+          <Suspense fallback={<div>Loading...</div>}>
+            <Post key={post.id} {...post} />
+          </Suspense>
         ))}
       </Results>
     </Wrapper>
