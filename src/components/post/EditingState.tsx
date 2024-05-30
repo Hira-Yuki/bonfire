@@ -5,7 +5,7 @@ interface EditingStateProps {
   username: string;
   editedPost: string;
   onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
-  handleEdit: () => void;
+  handleEdit: (e: React.MouseEvent<HTMLButtonElement>) => void;
   onCancel: () => void;
   newPhotoURL?: string;
   photo?: string | null;

@@ -66,10 +66,10 @@ const Timeline = () => {
 
   useEffect(() => {
     loadMore();
-  }, [loadMore]); 
+  }, [loadMore]);
 
   useEffect(() => {
-    const postQuery = query(collection(db, "posts"), orderBy("createdAt","desc"), limit(PAGE_SIZE));
+    const postQuery = query(collection(db, "posts"), orderBy("createdAt", "desc"), limit(PAGE_SIZE));
     const unsubscribe = onSnapshot(postQuery, (snapshot) => {
       snapshot.docChanges().forEach((change) => {
         const data = { ...change.doc.data(), id: change.doc.id } as IPost;
@@ -115,15 +115,21 @@ const Timeline = () => {
         posts.map((post, index) => {
           if (posts.length === index + 1) {
             return (
-              <div ref={lastItemRef} key={post.id}>
+              <PostContainer ref={lastItemRef} key={post.id}>
+                <Links key={post.id} onClick={() => navigate(`/post/${post.id}`)}>
+                  더보기
+                </Links>
                 <Post {...post} />
-              </div>
+              </PostContainer>
             );
           } else {
             return (
-              <Links key={post.id} onClick={() => navigate(`/post/${post.id}`)}>
+              <PostContainer key={post.id}>
+                <Links key={post.id} onClick={() => navigate(`/post/${post.id}`)}>
+                  더보기
+                </Links>
                 <Post {...post} />
-              </Links>
+              </PostContainer>
             );
           }
         })
@@ -141,8 +147,25 @@ const Wrapper = styled.div`
   gap: 10px;
   flex-direction: column;
   overflow-y: scroll;
-`;
+`
+
+const PostContainer = styled.div`
+  position: relative;
+`
 
 const Links = styled.div`
   cursor: pointer;
+  position: absolute;
+  right: 50%;
+  top: 15px;
+  padding: 5px 10px;
+  border-radius: 15px;
+  background-color: #1d9bf0;
+  opacity: 0.8;
+  z-index: 10;
+  &:hover,
+  &:active {
+    opacity: 1;
+  };
 `
+

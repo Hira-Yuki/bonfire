@@ -61,6 +61,7 @@ export default function Post({ username, photo, post, userId, id }: IPost) {
   }
 
   const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    e.stopPropagation()
     setEditedPost(e.target.value)
   }
 
@@ -78,7 +79,8 @@ export default function Post({ username, photo, post, userId, id }: IPost) {
     }
   }
 
-  const handleEdit = async () => {
+  const handleEdit = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation()
     if (isNotCurrentUser(userId)) return;
     try {
       setIsLoading(true)
@@ -124,6 +126,11 @@ export default function Post({ username, photo, post, userId, id }: IPost) {
 
   const handleModal = () => setIsModalOpen(!isModalOpen);
 
+  const handleEditState = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation()
+    setIsEditing(true)
+  }
+
   return (
     <Suspense fallback={null}>
       {isLoading ? (
@@ -150,7 +157,7 @@ export default function Post({ username, photo, post, userId, id }: IPost) {
             post={post}
             photo={photo}
             handleDelete={handleDelete}
-            handleEdit={() => setIsEditing(true)}
+            handleEdit={handleEditState}
             userOwnsPost={user?.uid === userId}
             error={error}
             onImageClick={handleModal}

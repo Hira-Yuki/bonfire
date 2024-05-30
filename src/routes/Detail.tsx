@@ -2,7 +2,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { IPost } from "../components/Timeline";
 import { Suspense, useCallback, useEffect, useState } from "react";
 import React from "react";
-import { addDoc, collection, doc, getDoc, getDocs, query, updateDoc } from "firebase/firestore";
+import { addDoc, collection, doc, getDoc, getDocs, orderBy, query, updateDoc } from "firebase/firestore";
 import { auth, db, storage } from "../firebase";
 import { styled } from "@linaria/react";
 import { MAX_POST_LENGTH } from "../constants/maxlangth";
@@ -51,7 +51,7 @@ export default function Detail() {
     if (id === undefined) return;
     try {
       const commentsRef = collection(db, "posts", id, "comments");
-      const commentsQuery = query(commentsRef);
+      const commentsQuery = query(commentsRef, orderBy("createdAt", "desc"));
       const commentsSnap = await getDocs(commentsQuery);
       const commentsList = commentsSnap.docs.map(doc => ({
         ...doc.data(),

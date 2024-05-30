@@ -6,7 +6,7 @@ interface ViewingStateProps {
   post: string;
   photo?: string | null;
   handleDelete: (e: React.MouseEvent<HTMLButtonElement>) => void;
-  handleEdit: () => void;
+  handleEdit: (e: React.MouseEvent<HTMLButtonElement>) => void;
   userOwnsPost: boolean;
   error: string | null;
   onImageClick: () => void;
