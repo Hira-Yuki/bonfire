@@ -66,7 +66,7 @@ export default function Detail() {
   useEffect(() => {
     fetchDocument()
     fetchComments()
-  }, [id, fetchDocument, fetchComments, comments])
+  }, [id, fetchDocument, fetchComments])
 
   const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setReply(e.target.value)
