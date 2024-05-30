@@ -66,7 +66,7 @@ export default function Detail() {
   useEffect(() => {
     fetchDocument()
     fetchComments()
-  }, [id, fetchDocument, fetchComments])
+  }, [id, fetchDocument, fetchComments, comments])
 
   const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setReply(e.target.value)
@@ -189,7 +189,7 @@ export default function Detail() {
         <Divider />
         <CommentsSection>
           {comments.map(comment => (
-            <Post key={comment.id} {...comment} />
+            <Post key={comment.id} {...comment} isComments={true} originalPostId={id}/>
           ))}
         </CommentsSection>
       </Wrapper>

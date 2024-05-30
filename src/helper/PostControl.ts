@@ -11,6 +11,9 @@ export const deletePostFromFirestore = async (id: string) => {
   await deleteDoc(doc(db, "posts", id));
 };
 
+export const deleteCommentsFromFirestore = async (originalPostId:string, id: string) => {
+  await deleteDoc(doc(db, "posts", originalPostId, "comments", id));
+}
 // Storage에서 포스트의 사진을 삭제하는 함수
 export const deletePhotoFromStorage = async (id: string) => {
   const photoRef = await getRef(id);

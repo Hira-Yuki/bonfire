@@ -4,7 +4,7 @@ import { doc, updateDoc } from "firebase/firestore";
 import { deleteObject, getDownloadURL, uploadBytes } from "firebase/storage";
 import { usePostState } from "../../hooks/usePostState";
 import React, { Suspense, useEffect } from "react";
-import { deletePhotoFromStorage, deletePostFromFirestore, getRef, isNotCurrentUser } from "../../helper/PostControl";
+import { deleteCommentsFromFirestore, deletePhotoFromStorage, deletePostFromFirestore, getRef, isNotCurrentUser } from "../../helper/PostControl";
 import { fileSizeChecker } from "../../helper/fileControl";
 import { FirebaseError } from "firebase/app";
 import { useNavigate, useParams } from "react-router-dom";
@@ -15,7 +15,12 @@ const ViewingState = React.lazy(() => import("./ViewingState"));
 const LoadingState = React.lazy(() => import("./LoadingState"));
 const ImageModal = React.lazy(() => import("./ImageModal"));
 
-export default function Post({ username, photo, post, userId, id }: IPost) {
+interface PostProps extends IPost {
+  isComments?: boolean;
+  originalPostId?: string;
+}
+
+export default function Post({ username, photo, post, userId, id, isComments, originalPostId }: PostProps) {
   const user = auth.currentUser
   const {
     isEditing,
@@ -51,11 +56,12 @@ export default function Post({ username, photo, post, userId, id }: IPost) {
 
     try {
       setIsLoading(true)
-      await deletePostFromFirestore(id)
+      if (isComments && originalPostId) await deleteCommentsFromFirestore(originalPostId, id)
+      else await deletePostFromFirestore(id)
       if (photo) {
         await deletePhotoFromStorage(id)
       }
-      if(params.id) {
+      if (params.id && !isComments && !originalPostId) {
         navigate("/")
       }
     } catch (error) {
