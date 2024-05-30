@@ -7,6 +7,7 @@ import React, { Suspense, useEffect } from "react";
 import { deletePhotoFromStorage, deletePostFromFirestore, getRef, isNotCurrentUser } from "../../helper/PostControl";
 import { fileSizeChecker } from "../../helper/fileControl";
 import { FirebaseError } from "firebase/app";
+import { useNavigate, useParams } from "react-router-dom";
 
 // 동적 import 사용
 const EditingState = React.lazy(() => import("./EditingState"));
@@ -35,6 +36,10 @@ export default function Post({ username, photo, post, userId, id }: IPost) {
     setIsModalOpen,
   } = usePostState(post, photo);
 
+  const navigate = useNavigate()
+  const params = useParams();
+
+
   useEffect(() => {
     setNewPhotoURL(photo)
   }, [photo, setNewPhotoURL])
@@ -49,6 +54,9 @@ export default function Post({ username, photo, post, userId, id }: IPost) {
       await deletePostFromFirestore(id)
       if (photo) {
         await deletePhotoFromStorage(id)
+      }
+      if(params.id) {
+        navigate("/")
       }
     } catch (error) {
       if (error instanceof FirebaseError) {
