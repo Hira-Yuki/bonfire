@@ -13,8 +13,7 @@ import { FirebaseError } from "firebase/app";
 
 const Post = React.lazy(() => import('../components/post/Post'));
 
-// TODO: 이미지 업로드 시 에러 발생, 코멘트 삭제 동작 안되며, 코멘트 수정 불가 
-// 원인 찾아서 해결필요.
+// TODO: 이미지 수정, 삭제가 되지 않는 문제 수정 필요
 export default function Detail() {
   const { id } = useParams<{ id: string }>();
   const [post, setPost] = useState<null | IPost>(null)
