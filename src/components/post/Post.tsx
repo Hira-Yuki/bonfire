@@ -98,29 +98,56 @@ export default function Post({ username, photo, post, userId, id, isComments, or
     if (isNotCurrentUser(userId)) return;
     try {
       setIsLoading(true)
-      const postRef = doc(db, "posts", id);
-      await updateDoc(postRef, {
-        post: editedPost,
-      })
-
-      if ($removePhoto) {
-        await deletePhotoFromStorage(id)
+      if (isComments && originalPostId) {
+        const postRef = doc(db, "posts", originalPostId, "comments", id);
         await updateDoc(postRef, {
-          photo: null
+          post: editedPost,
         })
+
+        if ($removePhoto) {
+          await deletePhotoFromStorage(id)
+          await updateDoc(postRef, {
+            photo: null
+          })
+        }
+
+        if (newPhoto) {
+          const photoRef = await getRef(id)
+          if (photo) await deleteObject(photoRef)
+
+          const locationRef = await getRef(id)
+          const result = await uploadBytes(locationRef, newPhoto)
+          const url = await getDownloadURL(result.ref)
+          await updateDoc(postRef, {
+            photo: url
+          })
+        }
+      } else {
+        const postRef = doc(db, "posts", id);
+        await updateDoc(postRef, {
+          post: editedPost,
+        })
+
+        if ($removePhoto) {
+          await deletePhotoFromStorage(id)
+          await updateDoc(postRef, {
+            photo: null
+          })
+        }
+
+        if (newPhoto) {
+          const photoRef = await getRef(id)
+          if (photo) await deleteObject(photoRef)
+
+          const locationRef = await getRef(id)
+          const result = await uploadBytes(locationRef, newPhoto)
+          const url = await getDownloadURL(result.ref)
+          await updateDoc(postRef, {
+            photo: url
+          })
+        }
       }
 
-      if (newPhoto) {
-        const photoRef = await getRef(id)
-        if (photo) await deleteObject(photoRef)
-
-        const locationRef = await getRef(id)
-        const result = await uploadBytes(locationRef, newPhoto)
-        const url = await getDownloadURL(result.ref)
-        await updateDoc(postRef, {
-          photo: url
-        })
-      }
       setIsEditing(false)
     } catch (error) {
       if (error instanceof FirebaseError) {
