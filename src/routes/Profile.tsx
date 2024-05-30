@@ -8,6 +8,7 @@ import { IPost } from "../components/Timeline"
 import Post from "../components/post/Post"
 import { resizeFile } from "../helper/fileControl"
 import { FirebaseError } from "firebase/app"
+import { useNavigate } from "react-router-dom"
 
 export default function Profile() {
   const user = auth.currentUser
@@ -16,6 +17,7 @@ export default function Profile() {
   const [name, setName] = useState(user?.displayName ?? "Anonymous");
   const [editMode, setEditMode] = useState(false);
   const [isResizing, setIsResizing] = useState(false)
+  const navigate = useNavigate()
 
   const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const { files } = e.target
@@ -127,7 +129,14 @@ export default function Profile() {
       </ChangeNameBtn>
       <Posts>
         {posts.map(post =>
-          (<Post key={post.id} {...post} />)
+          (
+            <PostContainer key={post.id}>
+            <Links key={post.id} onClick={() => navigate(`/post/${post.id}`)}>
+              더보기
+            </Links>
+            <Post {...post} />
+          </PostContainer>
+          )
         )}
       </Posts>
     </Wrapper>
@@ -201,4 +210,24 @@ const ChangeNameBtn = styled.button`
   text-transform: uppercase;
   border-radius: 5px;
   cursor: pointer;
+`
+
+const PostContainer = styled.div`
+  position: relative;
+`
+
+const Links = styled.div`
+  cursor: pointer;
+  position: absolute;
+  right: 50%;
+  top: 15px;
+  padding: 5px 10px;
+  border-radius: 15px;
+  background-color: #1d9bf0;
+  opacity: 0.8;
+  z-index: 10;
+  &:hover,
+  &:active {
+    opacity: 1;
+  };
 `
