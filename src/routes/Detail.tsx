@@ -51,7 +51,7 @@ export default function Detail() {
     if (id === undefined) return;
     try {
       const commentsRef = collection(db, "posts", id, "comments");
-      const commentsQuery = query(commentsRef, orderBy("createdAt", "desc"));
+      const commentsQuery = query(commentsRef, orderBy("createdAt","asc")); // 코멘트는 오래된 코멘트가 위로
       const commentsSnap = await getDocs(commentsQuery);
       const commentsList = commentsSnap.docs.map(doc => ({
         ...doc.data(),
