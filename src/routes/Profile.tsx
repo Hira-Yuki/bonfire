@@ -9,14 +9,19 @@ import Post from "../components/post/Post"
 import { resizeFile } from "../helper/fileControl"
 import { FirebaseError } from "firebase/app"
 import { useNavigate } from "react-router-dom"
+import { useRecoilState } from "recoil"
+import { userState } from "../recoil/userAtom"
+import NoProfileImage from "../components/icons/NoProfileImage"
 
 export default function Profile() {
   const user = auth.currentUser
-  const [avatar, setAvatar] = useState(user?.photoURL)
+  const [userData, setUserData] = useRecoilState(userState);
+  const [name, setName] = useState(userData?.username)
+  const [avatar, setAvatar] = useState(userData?.profilePictureUrl)
   const [posts, setPosts] = useState<IPost[]>([])
-  const [name, setName] = useState(user?.displayName ?? "Anonymous");
-  const [editMode, setEditMode] = useState(false);
+  const [editMode, setEditMode] = useState(false)
   const [isResizing, setIsResizing] = useState(false)
+
   const navigate = useNavigate()
 
   const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -36,6 +41,7 @@ export default function Profile() {
         await updateProfile(user, {
           photoURL: avatarURL,
         })
+        setUserData((prev) => prev ? { ...prev, profilePictureUrl: avatarURL } : null)
       }
     } catch (error) {
       if (error instanceof FirebaseError) {
@@ -106,9 +112,7 @@ export default function Profile() {
           {avatar ? (
             <AvatarImg src={avatar} />
           ) : (
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
-              <path fillRule="evenodd" d="M7.5 6a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0ZM3.751 20.105a8.25 8.25 0 0 1 16.498 0 .75.75 0 0 1-.437.695A18.683 18.683 0 0 1 12 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 0 1-.437-.695Z" clipRule="evenodd" />
-            </svg>
+            <NoProfileImage />
           )}
         </AvatarUpload>
       )
@@ -129,14 +133,14 @@ export default function Profile() {
       </ChangeNameBtn>
       <Posts>
         {posts.map(post =>
-          (
-            <PostContainer key={post.id}>
+        (
+          <PostContainer key={post.id}>
             <Links key={post.id} onClick={() => navigate(`/post/${post.id}`)}>
               더보기
             </Links>
             <Post {...post} />
           </PostContainer>
-          )
+        )
         )}
       </Posts>
     </Wrapper>

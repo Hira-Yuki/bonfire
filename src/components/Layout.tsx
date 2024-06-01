@@ -3,19 +3,33 @@ import { styled } from '@linaria/react';
 import { auth } from '../firebase'
 import { HomeIcon, SearchIcon, BellIcon, ProfileIcon, LogoutIcon } from './icons'
 import LoginIcon from './icons/LoginIcon';
+import { useEffect } from 'react';
+import { useRecoilState } from 'recoil';
+import { userState } from '../recoil/userAtom';
+import NoProfileImage from './icons/NoProfileImage';
 
 const Layout = () => {
   const navigate = useNavigate()
   const user = auth.currentUser
+  const avatar = user?.photoURL
+  const [userData, setUserData] = useRecoilState(userState);
+
+  useEffect(() => {
+    setUserData({
+      username: user?.displayName || "Anonymous",
+      profilePictureUrl: avatar || ""
+    })
+  }, [user, avatar, setUserData])
 
   const onLogOut = async () => {
     const confirmLogOut = confirm("정말로 로그아웃 하시겠습니까?")
     if (confirmLogOut) {
       await auth.signOut()
+      setUserData(null)
       navigate("/login")
     }
   }
-  console.log(user)
+
   if (user === null) {
     return (
       <Wrapper>
@@ -38,6 +52,12 @@ const Layout = () => {
     return (
       <Wrapper>
         <Menu>
+          {userData?.profilePictureUrl ? (
+            <Link to="/profile">
+              <AvatarImg src={userData?.profilePictureUrl} alt="User Avatar" />
+            </Link>
+          ) : (<NoProfileImage />)
+          }
           <Link to="/">
             <MenuItem>
               {/* 홈 */}
@@ -121,4 +141,9 @@ const MenuItem = styled.div`
       fill: #1d9bf0;
     }
   }
+`
+const AvatarImg = styled.img`
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
 `
