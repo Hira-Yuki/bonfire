@@ -2,52 +2,75 @@ import { Link, Outlet, useNavigate } from 'react-router-dom'
 import { styled } from '@linaria/react';
 import { auth } from '../firebase'
 import { HomeIcon, SearchIcon, BellIcon, ProfileIcon, LogoutIcon } from './icons'
+import LoginIcon from './icons/LoginIcon';
 
 const Layout = () => {
   const navigate = useNavigate()
+  const user = auth.currentUser
+
   const onLogOut = async () => {
     const confirmLogOut = confirm("정말로 로그아웃 하시겠습니까?")
-    if(confirmLogOut) {
+    if (confirmLogOut) {
       await auth.signOut()
       navigate("/login")
     }
   }
-
-  return (
-    <Wrapper>
-      <Menu>
-        <Link to="/">
-          <MenuItem>
-            {/* 홈 */}
-            <HomeIcon/>
+  console.log(user)
+  if (user === null) {
+    return (
+      <Wrapper>
+        <Menu>
+          <Link to="/">
+            <MenuItem>
+              {/* 홈 */}
+              <HomeIcon />
+            </MenuItem>
+          </Link>
+          <MenuItem onClick={() => navigate("/login")} className='log-in'>
+            {/* 로그인 */}
+            <LoginIcon />
           </MenuItem>
-        </Link>
-        <Link to="/search">
-          <MenuItem>
-            {/* 검색 */}
-            <SearchIcon/>
+        </Menu>
+        <Outlet />
+      </Wrapper>
+    )
+  } else {
+    return (
+      <Wrapper>
+        <Menu>
+          <Link to="/">
+            <MenuItem>
+              {/* 홈 */}
+              <HomeIcon />
+            </MenuItem>
+          </Link>
+          <Link to="/search">
+            <MenuItem>
+              {/* 검색 */}
+              <SearchIcon />
+            </MenuItem>
+          </Link>
+          <Link to="/notices">
+            <MenuItem>
+              {/* 알림 */}
+              <BellIcon />
+            </MenuItem>
+          </Link>
+          <Link to="/profile">
+            <MenuItem>
+              {/* 프로필 */}
+              <ProfileIcon />
+            </MenuItem>
+          </Link>
+          <MenuItem onClick={onLogOut} className='log-out'>
+            {/* 로그아웃 */}
+            <LogoutIcon />
           </MenuItem>
-        </Link>
-        <Link to="/notices">
-          <MenuItem>
-            {/* 알림 */}
-            <BellIcon/>
-          </MenuItem>
-        </Link>
-        <Link to="/profile">
-          <MenuItem>
-            {/* 프로필 */}
-            <ProfileIcon/>
-          </MenuItem>
-        </Link>
-        <MenuItem onClick={onLogOut} className='log-out'>
-          {/* 로그아웃 */}
-          <LogoutIcon/>
-        </MenuItem>
-      </Menu>
-      <Outlet />
-    </Wrapper>
-  )
+        </Menu>
+        <Outlet />
+      </Wrapper>
+    )
+  }
 }
 
 export default Layout
@@ -90,6 +113,12 @@ const MenuItem = styled.div`
     border-color: tomato;
     svg {
       fill: tomato;
+    }
+  }
+  &.log-in {
+    border-color: #1d9bf0;
+    svg {
+      fill: #1d9bf0;
     }
   }
 `

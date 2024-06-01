@@ -23,6 +23,7 @@ export default function Detail() {
   const [file, setFile] = useState<File | null>(null)
   const [preview, setPreview] = useState<string | null>(null)
   const [error, setError] = useState("")
+  const user = auth.currentUser
 
   const navigate = useNavigate()
   const remainingChars = MAX_POST_LENGTH - reply.length // post가 변경되면 리랜더링 되므로 state로 관리하지 않음
@@ -155,6 +156,7 @@ export default function Detail() {
             rows={5}
             onChange={onChange}
             value={reply}
+            disabled={!user}
             placeholder="댓글을 달아보세요." />
           {preview ? (
             <ImagePreviewContainer>
