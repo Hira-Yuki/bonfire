@@ -52,12 +52,15 @@ const Layout = () => {
     return (
       <Wrapper>
         <Menu>
-          {userData?.profilePictureUrl ? (
-            <Link to="/profile">
-              <AvatarImg src={userData?.profilePictureUrl} alt="User Avatar" />
-            </Link>
-          ) : (<NoProfileImage />)
-          }
+          <AvatarContainer>
+            {userData?.profilePictureUrl ? (
+              <Link to="/profile">
+                <AvatarImg src={userData?.profilePictureUrl} alt="User Avatar" />
+              </Link>
+            ) : (
+              <NoProfileImage />
+            )
+            }</AvatarContainer>
           <Link to="/">
             <MenuItem>
               {/* 홈 */}
@@ -143,7 +146,17 @@ const MenuItem = styled.div`
   }
 `
 const AvatarImg = styled.img`
-  width: 80px;
-  height: 80px;
+  width: 100%;
+  height: 100%;
   border-radius: 50%;
+`
+
+const AvatarContainer = styled.div`
+  width: 70px;
+  height: 70px;
+  svg {
+    height: 100%;
+    width: 100%;
+    fill: #1d9bf0;
+  }
 `

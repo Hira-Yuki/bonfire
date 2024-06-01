@@ -1,6 +1,6 @@
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth"
+import { User, createUserWithEmailAndPassword, updateProfile } from "firebase/auth"
 import { useState } from "react"
-import { auth } from "../firebase"
+import { auth, db } from "../firebase"
 import { Link, useNavigate } from "react-router-dom"
 import { FirebaseError } from "firebase/app"
 import { GithubButton, GoogleButton, SocialDivider } from "../components/socialbutton/"
@@ -13,6 +13,7 @@ import {
   Switcher
 }
   from "../styled-components/AuthComponents"
+import { addDoc, collection } from "firebase/firestore"
 
 const CreateAccount = () => {
   const navigate = useNavigate()
@@ -51,6 +52,7 @@ const CreateAccount = () => {
       const credentials = await createUserWithEmailAndPassword(auth, email, password)
       // 유저 계정 생성시 이름이 필요하지 않음, 가입시 입력 받은 것을 이용해서 바로 업데이트 해줌
       await updateProfile(credentials.user, { displayName: name, })
+      await saveUserInfo(credentials.user)
       navigate("/")
     } catch (error) {
       if (error instanceof FirebaseError) {
@@ -59,6 +61,14 @@ const CreateAccount = () => {
     } finally {
       setLoading(false)
     }
+  }
+
+  const saveUserInfo = async (user: User)=> {
+    await addDoc(collection(db, "users"), {
+      displayName: user.displayName,
+      email: user.email,
+      userId:user.uid
+    })
   }
 
   return (
