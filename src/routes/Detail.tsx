@@ -23,6 +23,7 @@ export default function Detail() {
   const [file, setFile] = useState<File | null>(null)
   const [preview, setPreview] = useState<string | null>(null)
   const [error, setError] = useState("")
+  const [trigger, setTrigger] = useState(false)
   const user = auth.currentUser
 
   const navigate = useNavigate()
@@ -66,7 +67,7 @@ export default function Detail() {
   useEffect(() => {
     fetchDocument()
     fetchComments()
-  }, [id, fetchDocument, fetchComments])
+  }, [id, fetchDocument, fetchComments, trigger])
 
   const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setReply(e.target.value)
@@ -138,6 +139,10 @@ export default function Detail() {
     setReply("")
   }
 
+const handleTrigger = ()=> {
+  setTrigger(!trigger)
+}
+
   return (
     <Suspense fallback={<div>로딩 중...</div>}>
       <Wrapper>
@@ -190,7 +195,7 @@ export default function Detail() {
         <Divider />
         <CommentsSection>
           {comments.map(comment => (
-            <Post key={comment.id} {...comment} isComments={true} originalPostId={id}/>
+            <Post key={comment.id} {...comment} isComments={true} originalPostId={id} handleTrigger={handleTrigger}/>
           ))}
         </CommentsSection>
       </Wrapper>

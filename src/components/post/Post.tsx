@@ -18,9 +18,10 @@ const ImageModal = React.lazy(() => import("./ImageModal"));
 interface PostProps extends IPost {
   isComments?: boolean;
   originalPostId?: string;
+  handleTrigger?:()=>void;
 }
 
-export default function Post({ username, photo, post, userId, id, isComments, originalPostId }: PostProps) {
+export default function Post({ username, photo, post, userId, id, isComments, originalPostId, handleTrigger }: PostProps) {
   const user = auth.currentUser
   const {
     isEditing,
@@ -78,6 +79,7 @@ export default function Post({ username, photo, post, userId, id, isComments, or
       console.error(error);
     } finally {
       setIsLoading(false)
+      if(handleTrigger !== undefined) handleTrigger()
     }
   }
 
@@ -170,6 +172,7 @@ export default function Post({ username, photo, post, userId, id, isComments, or
     } finally {
       set$RemovePhoto(false)
       setIsLoading(false)
+      if(handleTrigger !== undefined) handleTrigger()
     }
   }
 
