@@ -4,7 +4,7 @@ import { doc, updateDoc } from "firebase/firestore";
 import { deleteObject, getDownloadURL, uploadBytes } from "firebase/storage";
 import { usePostState } from "../../hooks/usePostState";
 import React, { Suspense, useEffect } from "react";
-import { deleteCommentsFromFirestore, deletePhotoFromStorage, deletePostFromFirestore, getRef, isNotCurrentUser } from "../../helper/PostControl";
+import { deleteCommentsFromFirestore, deleteCommentsPhotoFromStorage, deletePhotoFromStorage, deletePostFromFirestore, getRef, isNotCurrentUser } from "../../helper/PostControl";
 import { fileSizeChecker } from "../../helper/fileControl";
 import { FirebaseError } from "firebase/app";
 import { useNavigate, useParams } from "react-router-dom";
@@ -59,7 +59,14 @@ export default function Post({ username, photo, post, userId, id, isComments, or
       if (isComments && originalPostId) await deleteCommentsFromFirestore(originalPostId, id)
       else await deletePostFromFirestore(id)
       if (photo) {
-        await deletePhotoFromStorage(id)
+        if (isComments && originalPostId) {
+          console.log("댓글 이미지 수정 요청")
+          await deleteCommentsPhotoFromStorage(originalPostId, id)
+        }
+        else {
+          console.log("포스트 이미지 삭제 요청")
+          await deletePhotoFromStorage(id)
+        }
       }
       if (params.id && !isComments && !originalPostId) {
         navigate("/")
@@ -105,7 +112,13 @@ export default function Post({ username, photo, post, userId, id, isComments, or
         })
 
         if ($removePhoto) {
-          await deletePhotoFromStorage(id)
+          if(isComments && originalPostId){
+            await deleteCommentsPhotoFromStorage(originalPostId, id)
+          }
+          else{
+            await deletePhotoFromStorage(id)
+          }
+          
           await updateDoc(postRef, {
             photo: null
           })

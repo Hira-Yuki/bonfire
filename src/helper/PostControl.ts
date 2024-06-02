@@ -20,6 +20,11 @@ export const deletePhotoFromStorage = async (id: string) => {
   await deleteObject(photoRef);
 };
 
+export const deleteCommentsPhotoFromStorage = async (originalPostId:string,id: string) => {
+  const photoRef = ref(storage, `posts/comments/${originalPostId}/${id}`);
+  await deleteObject(photoRef);
+}
+
 // 사용자의 권한을 확인하는 함수
 export const isNotCurrentUser = (userId: string): boolean => {
   const user = auth.currentUser;

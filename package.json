@@ -12,6 +12,7 @@
     "deploy": "firebase deploy"
   },
   "dependencies": {
+    "@google-cloud/storage": "^7.11.1",
     "@linaria/core": "^6.2.0",
     "@linaria/react": "^6.2.1",
     "@wyw-in-js/babel-preset": "^0.5.3",
