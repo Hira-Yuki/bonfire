@@ -18,7 +18,7 @@ const ImageModal = React.lazy(() => import("./ImageModal"));
 interface PostProps extends IPost {
   isComments?: boolean;
   originalPostId?: string;
-  handleTrigger?:()=>void;
+  handleTrigger?: () => void;
 }
 
 export default function Post({ username, photo, post, userId, id, isComments, originalPostId, handleTrigger }: PostProps) {
@@ -71,7 +71,7 @@ export default function Post({ username, photo, post, userId, id, isComments, or
       }
       if (params.id && !isComments && !originalPostId) {
         navigate("/")
-      }
+      } else if (handleTrigger !== undefined) handleTrigger()
     } catch (error) {
       if (error instanceof FirebaseError) {
         setError("포스트 삭제에 실패했습니다. 문제가 계속되면 관리자에게 문의해주세요." + error.message);
@@ -79,7 +79,6 @@ export default function Post({ username, photo, post, userId, id, isComments, or
       console.error(error);
     } finally {
       setIsLoading(false)
-      if(handleTrigger !== undefined) handleTrigger()
     }
   }
 
@@ -114,13 +113,13 @@ export default function Post({ username, photo, post, userId, id, isComments, or
         })
 
         if ($removePhoto) {
-          if(isComments && originalPostId){
+          if (isComments && originalPostId) {
             await deleteCommentsPhotoFromStorage(originalPostId, id)
           }
-          else{
+          else {
             await deletePhotoFromStorage(id)
           }
-          
+
           await updateDoc(postRef, {
             photo: null
           })
@@ -164,6 +163,7 @@ export default function Post({ username, photo, post, userId, id, isComments, or
       }
 
       setIsEditing(false)
+      if (handleTrigger !== undefined) handleTrigger()
     } catch (error) {
       if (error instanceof FirebaseError) {
         setError("포스트 업데이트에 실패했습니다. 문제가 계속되면 관리자에게 문의해 주세요." + error.message);
@@ -172,7 +172,6 @@ export default function Post({ username, photo, post, userId, id, isComments, or
     } finally {
       set$RemovePhoto(false)
       setIsLoading(false)
-      if(handleTrigger !== undefined) handleTrigger()
     }
   }
 
